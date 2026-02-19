@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "concurrently \"vite --host\" \"npm run server\"",
     "server": "npm install && npm run build && nodemon --watch server server/index.js",
-    "build": "vite build",
+    "build": "npm install && npm run build && nodemon --watch server server/index.js",
     "preview": "vite preview"
   },
   "dependencies": {
