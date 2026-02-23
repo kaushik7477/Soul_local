@@ -439,16 +439,7 @@ const HomePage: React.FC<HomePageProps> = ({ products, addToCart, toggleWishlist
               {/* Row 1: 10 images repeated */}
               {(() => {
                  const defaultImages = [
-                    "https://d1311wbk6unapo.cloudfront.net/NushopCatalogue/tr:w-600,f-webp,fo-auto/68ee6834b30a802f2be99c65/testimonial/Rachita%20Bose_4E03A1RN70_2025-11-12_1.jpg",
-                    "https://d1311wbk6unapo.cloudfront.net/NushopCatalogue/tr:w-600,f-webp,fo-auto/68ee6834b30a802f2be99c65/testimonial/Deepa%20Nair_GULH8VOZOG_2025-11-12_1.jpg",
-                    "https://d1311wbk6unapo.cloudfront.net/NushopCatalogue/tr:f-webp,w-1200,fo-auto/68ee6834b30a802f2be99c65/cat_img/Rg59u53D_9KACD2GFU4_2025-11-08_3.jpg",
-                    "https://d1311wbk6unapo.cloudfront.net/NushopCatalogue/tr:f-webp,w-1200,fo-auto/68ee6834b30a802f2be99c65/cat_img/Forest_Green__Oversized_T_shirt_240GSM__IKK0LKV35S_2026-01-13_1.png",
-                    "https://d1311wbk6unapo.cloudfront.net/NushopCatalogue/tr:f-webp,w-1200,fo-auto/68ee6834b30a802f2be99c65/cat_img/Brown_Oversized_T_shirt__Bengali_Edtions__WRHNNRY2NU_2025-12-30_1.png",
-                    "https://d1311wbk6unapo.cloudfront.net/NushopCatalogue/tr:f-webp,w-1200,fo-auto/68ee6834b30a802f2be99c65/cat_img/OFF_White_Horus_Oversized_Tee__Mythology_Edition__200GSM_EU5KVRYHGT_2025-11-19_1.png",
-                    "https://d1311wbk6unapo.cloudfront.net/NushopCatalogue/tr:w-600,f-webp,fo-auto/68ee6834b30a802f2be99c65/testimonial/Rachita%20Bose_4E03A1RN70_2025-11-12_1.jpg",
-                    "https://d1311wbk6unapo.cloudfront.net/NushopCatalogue/tr:w-600,f-webp,fo-auto/68ee6834b30a802f2be99c65/testimonial/Deepa%20Nair_GULH8VOZOG_2025-11-12_1.jpg",
-                    "https://d1311wbk6unapo.cloudfront.net/NushopCatalogue/tr:f-webp,w-1200,fo-auto/68ee6834b30a802f2be99c65/cat_img/Rg59u53D_9KACD2GFU4_2025-11-08_3.jpg",
-                    "https://d1311wbk6unapo.cloudfront.net/NushopCatalogue/tr:f-webp,w-1200,fo-auto/68ee6834b30a802f2be99c65/cat_img/Forest_Green__Oversized_T_shirt_240GSM__IKK0LKV35S_2026-01-13_1.png"
+                    
                  ];
                  const rowReviews = [...reviews, ...defaultImages.map(url => ({ imageUrl: url }))].slice(0, 10);
                  return rowReviews.map((r, i) => (
@@ -461,16 +452,7 @@ const HomePage: React.FC<HomePageProps> = ({ products, addToCart, toggleWishlist
               {/* Duplicate for smooth marquee */}
               {(() => {
                  const defaultImages = [
-                    "https://d1311wbk6unapo.cloudfront.net/NushopCatalogue/tr:w-600,f-webp,fo-auto/68ee6834b30a802f2be99c65/testimonial/Rachita%20Bose_4E03A1RN70_2025-11-12_1.jpg",
-                    "https://d1311wbk6unapo.cloudfront.net/NushopCatalogue/tr:w-600,f-webp,fo-auto/68ee6834b30a802f2be99c65/testimonial/Deepa%20Nair_GULH8VOZOG_2025-11-12_1.jpg",
-                    "https://d1311wbk6unapo.cloudfront.net/NushopCatalogue/tr:f-webp,w-1200,fo-auto/68ee6834b30a802f2be99c65/cat_img/Rg59u53D_9KACD2GFU4_2025-11-08_3.jpg",
-                    "https://d1311wbk6unapo.cloudfront.net/NushopCatalogue/tr:f-webp,w-1200,fo-auto/68ee6834b30a802f2be99c65/cat_img/Forest_Green__Oversized_T_shirt_240GSM__IKK0LKV35S_2026-01-13_1.png",
-                    "https://d1311wbk6unapo.cloudfront.net/NushopCatalogue/tr:f-webp,w-1200,fo-auto/68ee6834b30a802f2be99c65/cat_img/Brown_Oversized_T_shirt__Bengali_Edtions__WRHNNRY2NU_2025-12-30_1.png",
-                    "https://d1311wbk6unapo.cloudfront.net/NushopCatalogue/tr:f-webp,w-1200,fo-auto/68ee6834b30a802f2be99c65/cat_img/OFF_White_Horus_Oversized_Tee__Mythology_Edition__200GSM_EU5KVRYHGT_2025-11-19_1.png",
-                    "https://d1311wbk6unapo.cloudfront.net/NushopCatalogue/tr:w-600,f-webp,fo-auto/68ee6834b30a802f2be99c65/testimonial/Rachita%20Bose_4E03A1RN70_2025-11-12_1.jpg",
-                    "https://d1311wbk6unapo.cloudfront.net/NushopCatalogue/tr:w-600,f-webp,fo-auto/68ee6834b30a802f2be99c65/testimonial/Deepa%20Nair_GULH8VOZOG_2025-11-12_1.jpg",
-                    "https://d1311wbk6unapo.cloudfront.net/NushopCatalogue/tr:f-webp,w-1200,fo-auto/68ee6834b30a802f2be99c65/cat_img/Rg59u53D_9KACD2GFU4_2025-11-08_3.jpg",
-                    "https://d1311wbk6unapo.cloudfront.net/NushopCatalogue/tr:f-webp,w-1200,fo-auto/68ee6834b30a802f2be99c65/cat_img/Forest_Green__Oversized_T_shirt_240GSM__IKK0LKV35S_2026-01-13_1.png"
+                    
                  ];
                  const rowReviews = [...reviews, ...defaultImages.map(url => ({ imageUrl: url }))].slice(0, 10);
                  return rowReviews.map((r, i) => (
@@ -486,16 +468,7 @@ const HomePage: React.FC<HomePageProps> = ({ products, addToCart, toggleWishlist
                {/* Row 2: Next 10 images */}
               {(() => {
                  const defaultImages = [
-                    "https://d1311wbk6unapo.cloudfront.net/NushopCatalogue/tr:f-webp,w-1200,fo-auto/68ee6834b30a802f2be99c65/cat_img/Brown_Oversized_T_shirt__Bengali_Edtions__WRHNNRY2NU_2025-12-30_1.png",
-                    "https://d1311wbk6unapo.cloudfront.net/NushopCatalogue/tr:f-webp,w-1200,fo-auto/68ee6834b30a802f2be99c65/cat_img/OFF_White_Horus_Oversized_Tee__Mythology_Edition__200GSM_EU5KVRYHGT_2025-11-19_1.png",
-                    "https://d1311wbk6unapo.cloudfront.net/NushopCatalogue/tr:w-600,f-webp,fo-auto/68ee6834b30a802f2be99c65/testimonial/Rachita%20Bose_4E03A1RN70_2025-11-12_1.jpg",
-                    "https://d1311wbk6unapo.cloudfront.net/NushopCatalogue/tr:w-600,f-webp,fo-auto/68ee6834b30a802f2be99c65/testimonial/Deepa%20Nair_GULH8VOZOG_2025-11-12_1.jpg",
-                    "https://d1311wbk6unapo.cloudfront.net/NushopCatalogue/tr:f-webp,w-1200,fo-auto/68ee6834b30a802f2be99c65/cat_img/Rg59u53D_9KACD2GFU4_2025-11-08_3.jpg",
-                    "https://d1311wbk6unapo.cloudfront.net/NushopCatalogue/tr:f-webp,w-1200,fo-auto/68ee6834b30a802f2be99c65/cat_img/Forest_Green__Oversized_T_shirt_240GSM__IKK0LKV35S_2026-01-13_1.png",
-                    "https://d1311wbk6unapo.cloudfront.net/NushopCatalogue/tr:f-webp,w-1200,fo-auto/68ee6834b30a802f2be99c65/cat_img/Brown_Oversized_T_shirt__Bengali_Edtions__WRHNNRY2NU_2025-12-30_1.png",
-                    "https://d1311wbk6unapo.cloudfront.net/NushopCatalogue/tr:f-webp,w-1200,fo-auto/68ee6834b30a802f2be99c65/cat_img/OFF_White_Horus_Oversized_Tee__Mythology_Edition__200GSM_EU5KVRYHGT_2025-11-19_1.png",
-                    "https://d1311wbk6unapo.cloudfront.net/NushopCatalogue/tr:w-600,f-webp,fo-auto/68ee6834b30a802f2be99c65/testimonial/Rachita%20Bose_4E03A1RN70_2025-11-12_1.jpg",
-                    "https://d1311wbk6unapo.cloudfront.net/NushopCatalogue/tr:w-600,f-webp,fo-auto/68ee6834b30a802f2be99c65/testimonial/Deepa%20Nair_GULH8VOZOG_2025-11-12_1.jpg"
+                    
                  ];
                  // Use next 10 reviews (10-20) if available
                  const nextReviews = reviews.slice(10);
@@ -509,16 +482,7 @@ const HomePage: React.FC<HomePageProps> = ({ products, addToCart, toggleWishlist
                {/* Duplicate */}
               {(() => {
                  const defaultImages = [
-                    "https://d1311wbk6unapo.cloudfront.net/NushopCatalogue/tr:f-webp,w-1200,fo-auto/68ee6834b30a802f2be99c65/cat_img/Brown_Oversized_T_shirt__Bengali_Edtions__WRHNNRY2NU_2025-12-30_1.png",
-                    "https://d1311wbk6unapo.cloudfront.net/NushopCatalogue/tr:f-webp,w-1200,fo-auto/68ee6834b30a802f2be99c65/cat_img/OFF_White_Horus_Oversized_Tee__Mythology_Edition__200GSM_EU5KVRYHGT_2025-11-19_1.png",
-                    "https://d1311wbk6unapo.cloudfront.net/NushopCatalogue/tr:w-600,f-webp,fo-auto/68ee6834b30a802f2be99c65/testimonial/Rachita%20Bose_4E03A1RN70_2025-11-12_1.jpg",
-                    "https://d1311wbk6unapo.cloudfront.net/NushopCatalogue/tr:w-600,f-webp,fo-auto/68ee6834b30a802f2be99c65/testimonial/Deepa%20Nair_GULH8VOZOG_2025-11-12_1.jpg",
-                    "https://d1311wbk6unapo.cloudfront.net/NushopCatalogue/tr:f-webp,w-1200,fo-auto/68ee6834b30a802f2be99c65/cat_img/Rg59u53D_9KACD2GFU4_2025-11-08_3.jpg",
-                    "https://d1311wbk6unapo.cloudfront.net/NushopCatalogue/tr:f-webp,w-1200,fo-auto/68ee6834b30a802f2be99c65/cat_img/Forest_Green__Oversized_T_shirt_240GSM__IKK0LKV35S_2026-01-13_1.png",
-                    "https://d1311wbk6unapo.cloudfront.net/NushopCatalogue/tr:f-webp,w-1200,fo-auto/68ee6834b30a802f2be99c65/cat_img/Brown_Oversized_T_shirt__Bengali_Edtions__WRHNNRY2NU_2025-12-30_1.png",
-                    "https://d1311wbk6unapo.cloudfront.net/NushopCatalogue/tr:f-webp,w-1200,fo-auto/68ee6834b30a802f2be99c65/cat_img/OFF_White_Horus_Oversized_Tee__Mythology_Edition__200GSM_EU5KVRYHGT_2025-11-19_1.png",
-                    "https://d1311wbk6unapo.cloudfront.net/NushopCatalogue/tr:w-600,f-webp,fo-auto/68ee6834b30a802f2be99c65/testimonial/Rachita%20Bose_4E03A1RN70_2025-11-12_1.jpg",
-                    "https://d1311wbk6unapo.cloudfront.net/NushopCatalogue/tr:w-600,f-webp,fo-auto/68ee6834b30a802f2be99c65/testimonial/Deepa%20Nair_GULH8VOZOG_2025-11-12_1.jpg"
+
                  ];
                  const nextReviews = reviews.slice(10);
                  const rowReviews = [...nextReviews, ...defaultImages.map(url => ({ imageUrl: url }))].slice(0, 10);
