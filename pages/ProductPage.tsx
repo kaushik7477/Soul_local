@@ -1,10 +1,10 @@
 
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { Filter, ChevronDown, LayoutGrid, List } from 'lucide-react';
 import ProductCard from '../components/ProductCard';
 import { Product } from '../types';
-import { CATEGORIES } from '../constants';
+import { fetchTags } from '../src/api';
 
 interface ProductPageProps {
   products: Product[];
@@ -17,6 +17,23 @@ const ProductPage: React.FC<ProductPageProps> = ({ products, addToCart, toggleWi
   const [searchParams] = useSearchParams();
   const [sortBy, setSortBy] = useState('relevant');
   const [filterCat, setFilterCat] = useState(searchParams.get('cat') || 'All');
+  const [tags, setTags] = useState<{ name: string }[]>([]);
+
+  useEffect(() => {
+    const loadTags = async () => {
+      try {
+        const data = await fetchTags();
+        setTags(data);
+      } catch (e) {
+      }
+    };
+    loadTags();
+  }, []);
+
+  const filterOptions = useMemo(() => {
+    const names = tags.map(t => t.name);
+    return ['All', ...names];
+  }, [tags]);
   
   // Tag filter from URL
   const filterTag = searchParams.get('tag');
@@ -25,7 +42,11 @@ const ProductPage: React.FC<ProductPageProps> = ({ products, addToCart, toggleWi
     let result = [...products];
     
     if (filterCat !== 'All') {
-      result = result.filter(p => p.category.some(c => c.toLowerCase() === filterCat.toLowerCase()));
+      const f = filterCat.toLowerCase();
+      result = result.filter(p =>
+        (p.category && p.category.some(c => c.toLowerCase() === f)) ||
+        (p.tags && p.tags.some(t => t.toLowerCase() === f))
+      );
     }
 
     if (filterTag) {
@@ -70,7 +91,7 @@ const ProductPage: React.FC<ProductPageProps> = ({ products, addToCart, toggleWi
           <div className="flex flex-wrap items-center gap-4">
             {/* Category Filter */}
             <div className="flex bg-zinc-900 p-1 rounded-sm">
-              {['All', ...CATEGORIES.slice(0, 4)].map(cat => (
+              {filterOptions.map(cat => (
                 <button 
                   key={cat}
                   onClick={() => setFilterCat(cat)}

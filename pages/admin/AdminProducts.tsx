@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { Plus, Search, Edit2, Trash2, ExternalLink, X, Upload, AlertTriangle } from 'lucide-react';
 import { Product } from '../../types';
 import { createProduct, updateProduct, deleteProduct, fetchTags, createTag, deleteTag, uploadImage, fetchCategories, deleteCategory } from '../../src/api';
@@ -39,6 +39,7 @@ const AdminProducts: React.FC<AdminProductsProps> = ({ products, setProducts }) 
   });
 
   const [addingOption, setAddingOption] = useState<string | null>(null); // 'quality', 'pickup', etc.
+  const formRef = useRef<HTMLDivElement | null>(null);
 
   // Form State
   const initialFormState = {
@@ -73,6 +74,12 @@ const AdminProducts: React.FC<AdminProductsProps> = ({ products, setProducts }) 
     loadTags();
     loadCategories();
   }, []);
+
+  useEffect(() => {
+    if (isAdding && isEditing && formRef.current) {
+      formRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+  }, [isAdding, isEditing]);
 
   const loadCategories = async () => {
     try {
@@ -311,7 +318,7 @@ const AdminProducts: React.FC<AdminProductsProps> = ({ products, setProducts }) 
       </div>
 
       {isAdding && (
-        <div className="bg-zinc-900/50 border border-white/5 rounded-3xl p-8 space-y-8">
+        <div ref={formRef} className="bg-zinc-900/50 border border-white/5 rounded-3xl p-8 space-y-8">
             <h2 className="text-xl font-bold uppercase text-white mb-6 border-b border-white/10 pb-4">
                 {isEditing ? 'Edit Artifact' : 'New Artifact'}
             </h2>
@@ -447,9 +454,9 @@ const AdminProducts: React.FC<AdminProductsProps> = ({ products, setProducts }) 
                             onChange={e => setFormData({...formData, isBestSelling: e.target.checked})}
                             className="w-5 h-5 accent-green-500 cursor-pointer"
                         />
-                        <label htmlFor="isBestSelling" className="text-sm font-bold uppercase text-white cursor-pointer select-none">
+                        {/* <label htmlFor="isBestSelling" className="text-sm font-bold uppercase text-white cursor-pointer select-none">
                             Mark as Best Seller
-                        </label>
+                        </label> */}
                     </div>
 
                     {/* Quality & Origin */}

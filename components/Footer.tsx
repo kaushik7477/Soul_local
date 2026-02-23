@@ -94,7 +94,7 @@ const Footer: React.FC = () => {
             <div className="flex items-center gap-3">
               {/* <span className="text-sm font-bold text-zinc-900">Mitelogix</span> */}
               <img
-                src="public\assets\mytelogix.png"
+                src="/assets/mytelogix.png"
                 alt="Mitelogix"
                 className="h-26 object-contain"
               />

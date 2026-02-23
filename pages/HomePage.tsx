@@ -482,7 +482,7 @@ const HomePage: React.FC<HomePageProps> = ({ products, addToCart, toggleWishlist
                {/* Duplicate */}
               {(() => {
                  const defaultImages = [
-
+                    
                  ];
                  const nextReviews = reviews.slice(10);
                  const rowReviews = [...nextReviews, ...defaultImages.map(url => ({ imageUrl: url }))].slice(0, 10);

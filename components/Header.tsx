@@ -86,9 +86,13 @@ const Header: React.FC<HeaderProps> = ({ user, cartCount, wishlistCount, product
 
         {/* Center: Logo - Fixed z-index and spacing for mobile */}
         <Link to="/" className="absolute left-1/2 transform -translate-x-1/2 flex flex-col items-center z-10">
-          <span className="text-xl md:text-3xl font-bold tracking-tighter bg-gradient-to-r from-white to-zinc-500 bg-clip-text relative">
-            SOUL STICH
-            <sup className="absolute -top-1 -right-3 text-[0.4em] text-zinc-500 font-medium">TM</sup>
+          <span className="flex items-center">
+            <span className="text-xl md:text-3xl font-bold tracking-tighter bg-gradient-to-r from-white to-zinc-500 bg-clip-text">
+              SOUL STICH
+            </span>
+            <span className="ml-1 text-[0.4em] md:text-[0.45em] text-white font-semibold translate-y-[-0.8em] md:translate-y-[-0.95em]">
+              TM
+            </span>
           </span>
           <span className="text-[8px] md:text-[10px] tracking-[0.3em] font-light text-zinc-500 uppercase -mt-1">Premium Apparel</span>
         </Link>
