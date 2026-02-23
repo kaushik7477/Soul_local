@@ -16,6 +16,7 @@ import FreeGift from '../models/FreeGift.js';
 import User from '../models/User.js';
 import Order from '../models/Order.js';
 import Cart from '../models/Cart.js';
+import AdminAccess from '../models/AdminAccess.js';
 import Razorpay from 'razorpay';
 import crypto from 'crypto';
 import axios from 'axios';
@@ -360,6 +361,120 @@ router.post('/free-gifts', async (req, res) => {
     const gift = new FreeGift(req.body);
     await gift.save();
     res.json(gift);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// --- Admin Access (Panel Admins) ---
+router.get('/admin-access', async (req, res) => {
+  try {
+    const admins = await AdminAccess.find().sort({ createdAt: -1 });
+    res.json(admins);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.post('/admin-access', async (req, res) => {
+  try {
+    const { email, password, sections, status } = req.body;
+    if (!email || !password) {
+      return res.status(400).json({ error: 'Email and password are required' });
+    }
+    const normalizedEmail = String(email).trim().toLowerCase();
+    const existing = await AdminAccess.findOne({ email: normalizedEmail });
+    if (existing) {
+      return res.status(400).json({ error: 'An admin with this email already exists. Use edit instead.' });
+    }
+    const admin = new AdminAccess({
+      email: normalizedEmail,
+      password,
+      sections: sections || {},
+      status: status || 'active',
+    });
+    await admin.save();
+    res.json(admin);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.put('/admin-access/:id', async (req, res) => {
+  try {
+    const { email, password, sections, status } = req.body;
+    const update = {};
+    if (email) update.email = String(email).trim().toLowerCase();
+    if (password) update.password = password;
+    if (sections) update.sections = sections;
+    if (status) update.status = status;
+
+    const admin = await AdminAccess.findByIdAndUpdate(req.params.id, update, {
+      new: true,
+      runValidators: true,
+    });
+    if (!admin) {
+      return res.status(404).json({ error: 'Admin not found' });
+    }
+    res.json(admin);
+  } catch (err) {
+    if (err.code === 11000) {
+      return res.status(400).json({ error: 'An admin with this email already exists.' });
+    }
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.delete('/admin-access/:id', async (req, res) => {
+  try {
+    const admin = await AdminAccess.findByIdAndDelete(req.params.id);
+    if (!admin) {
+      return res.status(404).json({ error: 'Admin not found' });
+    }
+    res.json({ message: 'Admin deleted successfully' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.get('/admin-access/by-email', async (req, res) => {
+  try {
+    const email = String(req.query.email || '').trim().toLowerCase();
+    if (!email) {
+      return res.status(400).json({ error: 'Email is required' });
+    }
+    const admin = await AdminAccess.findOne({ email });
+    if (!admin) {
+      return res.status(404).json({ error: 'Admin account not found' });
+    }
+    res.json(admin);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.post('/admin-access/login', async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    if (!email || !password) {
+      return res.status(400).json({ error: 'Email and password are required' });
+    }
+    const normalizedEmail = String(email).trim().toLowerCase();
+    const admin = await AdminAccess.findOne({ email: normalizedEmail });
+    if (!admin) {
+      return res.status(404).json({ error: 'Admin account not found' });
+    }
+    if (admin.status === 'blocked') {
+      return res.status(403).json({ error: 'Your admin access is blocked. Contact the superadmin.' });
+    }
+    if (admin.password !== password) {
+      return res.status(401).json({ error: 'Invalid admin password' });
+    }
+    admin.lastActiveAt = new Date();
+    await admin.save();
+    const adminJson = admin.toJSON();
+    delete adminJson.password;
+    res.json(adminJson);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

@@ -178,6 +178,42 @@ export const deleteFreeGift = async (id: string) => {
   return data;
 };
 
+// --- Admin Access (Panel Admins) ---
+export const fetchAdminAccessList = async () => {
+  try {
+    const { data } = await api.get('/admin-access');
+    return (data || []).map((a: any) => ({ ...a, id: a.id || a._id }));
+  } catch (error) {
+    console.error('Error fetching admin access list:', error);
+    return [];
+  }
+};
+
+export const createAdminAccess = async (adminData: any) => {
+  const { data } = await api.post('/admin-access', adminData);
+  return data;
+};
+
+export const updateAdminAccess = async (id: string, adminData: any) => {
+  const { data } = await api.put(`/admin-access/${id}`, adminData);
+  return data;
+};
+
+export const deleteAdminAccess = async (id: string) => {
+  const { data } = await api.delete(`/admin-access/${id}`);
+  return data;
+};
+
+export const loginAdminAccess = async (email: string, password: string) => {
+  const { data } = await api.post('/admin-access/login', { email, password });
+  return data;
+};
+
+export const fetchAdminAccessByEmail = async (email: string) => {
+  const { data } = await api.get('/admin-access/by-email', { params: { email } });
+  return data;
+};
+
 export const bookShiprocket = async (orderId: string) => {
   const { data } = await api.post('/shipping/shiprocket/book', { orderId });
   return data;

@@ -151,8 +151,8 @@ const AdminCoupons: React.FC = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
             {coupons.map(coupon => (
-              <div key={coupon.id || coupon._id} className={`bg-zinc-900 border ${coupon.isVisible ? 'border-green-500/30' : 'border-red-500/30'} p-6 rounded-2xl relative group overflow-hidden`}>
-                <div className="absolute top-4 right-4 flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
+              <div key={coupon.id || coupon._id} className={`bg-zinc-900 border ${coupon.isVisible ? 'border-green-500/30' : 'border-red-500/30'} p-6 rounded-2xl relative overflow-hidden`}>
+                <div className="absolute top-4 right-4 flex space-x-2">
                   <button onClick={() => setViewUsageCoupon(coupon)} className="p-2 bg-black rounded-full hover:text-blue-500"><Eye className="w-4 h-4" /></button>
                   <button onClick={() => openCouponModal(coupon)} className="p-2 bg-black rounded-full hover:text-green-500"><Edit2 className="w-4 h-4" /></button>
                   <button onClick={() => handleDeleteCoupon((coupon.id || coupon._id)!)} className="p-2 bg-black rounded-full hover:text-red-500"><Trash2 className="w-4 h-4" /></button>
@@ -214,8 +214,8 @@ const AdminCoupons: React.FC = () => {
 
           <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
             {gifts.map(gift => (
-              <div key={gift.id || gift._id} className={`bg-zinc-900 border ${gift.isActive ? 'border-green-500/30' : 'border-red-500/30'} p-6 rounded-2xl relative group`}>
-                 <div className="absolute top-4 right-4 flex space-x-2 opacity-0 group-hover:opacity-100 transition-opacity">
+              <div key={gift.id || gift._id} className={`bg-zinc-900 border ${gift.isActive ? 'border-green-500/30' : 'border-red-500/30'} p-6 rounded-2xl relative`}>
+                 <div className="absolute top-4 right-4 flex space-x-2">
                   <button onClick={() => openGiftModal(gift)} className="p-2 bg-black rounded-full hover:text-green-500"><Edit2 className="w-4 h-4" /></button>
                   <button onClick={() => handleDeleteGift((gift.id || gift._id)!)} className="p-2 bg-black rounded-full hover:text-red-500"><Trash2 className="w-4 h-4" /></button>
                 </div>

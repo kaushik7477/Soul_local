@@ -331,7 +331,7 @@ const AdminFinance: React.FC = () => {
                   { label: 'Last Settlement', date: 'Feb 10, 2026', amount: 45000, status: 'Settled' },
                   { label: 'Pending Reserve', date: 'Ongoing', amount: financeData.grossRevenue * 0.1, status: 'Held' },
                 ].map((item, i) => (
-                  <div key={i} className="p-4 bg-black border border-white/5 rounded-2xl group hover:border-white/20 transition-all">
+                  <div key={i} className="p-4 bg-black border border-white/5 rounded-2xl transition-all">
                     <div className="flex justify-between items-start mb-2">
                       <span className="text-[10px] font-black uppercase text-zinc-500">{item.label}</span>
                       <span className={`text-[8px] font-black uppercase px-2 py-1 rounded-full ${
@@ -346,9 +346,16 @@ const AdminFinance: React.FC = () => {
                   </div>
                 ))}
                 <div className="pt-4">
-                  <button className="w-full py-4 bg-white text-black rounded-2xl font-black uppercase text-[10px] tracking-widest hover:bg-orange-500 transition-all">
-                    View Razorpay Dashboard
-                  </button>
+                  <a
+                    href="https://dashboard.razorpay.com/"
+                    target="_blank"
+                    rel="noreferrer"
+                    className="block w-full"
+                  >
+                    <button className="w-full py-4 bg-white text-black rounded-2xl font-black uppercase text-[10px] tracking-widest hover:bg-orange-500 transition-all">
+                      View Razorpay Dashboard
+                    </button>
+                  </a>
                 </div>
               </div>
             </div>

@@ -182,11 +182,12 @@ const AdminWebsite: React.FC = () => {
     if (!newReviewFile) return;
     try {
       const url = await uploadImage(newReviewFile);
-      await createReview({ imageUrl: url });
+      await createReview({ imageUrl: url, isApproved: true });
       setNewReviewFile(null);
-      loadData();
+      await loadData();
+      alert('Review uploaded and approved successfully!');
     } catch (e) {
-      // console.error(e);
+      alert('Failed to upload review.');
     }
   };
 
@@ -455,14 +456,14 @@ const AdminWebsite: React.FC = () => {
             {[1,2,3,4,5,6,7,8,9].map(pos => {
                 const img = heroImages.find(h => Number(h.position) === pos);
                 return (
-                    <div key={pos} className={`relative group aspect-video rounded-lg overflow-hidden border ${img ? 'border-white/20 bg-zinc-900' : 'border-white/5 bg-black border-dashed flex items-center justify-center'}`}>
+                    <div key={pos} className={`relative aspect-video rounded-lg overflow-hidden border ${img ? 'border-white/20 bg-zinc-900' : 'border-white/5 bg-black border-dashed flex items-center justify-center'}`}>
                         <div className="absolute top-2 left-2 bg-black/80 text-white text-[10px] font-bold px-2 py-1 rounded border border-white/10 z-10">
                             #{pos}
                         </div>
                         {img ? (
                             <>
                                 <img src={img.imageUrl} className="w-full h-full object-cover" alt={`Hero ${pos}`} />
-                                <div className="absolute inset-0 bg-black/80 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center space-y-3">
+                                <div className="absolute inset-0 bg-black/80 opacity-100 transition-opacity flex flex-col items-center justify-center space-y-3">
                                     <div className="text-center">
                                         <p className="text-xs font-bold text-zinc-400 uppercase">Linked SKU</p>
                                         <p className="text-sm font-black text-white uppercase">{img.sku}</p>
@@ -567,12 +568,12 @@ const AdminWebsite: React.FC = () => {
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {collectionsConfig.map((col, i) => (
-              <div key={i} className="relative group aspect-[4/5] bg-zinc-900 border border-white/5 rounded-lg overflow-hidden">
+              <div key={i} className="relative aspect-[4/5] bg-zinc-900 border border-white/5 rounded-lg overflow-hidden">
                 <img src={col.imageUrl} className="w-full h-full object-cover" alt={col.tag} />
                 <div className="absolute bottom-0 left-0 right-0 bg-black/80 p-2">
                     <p className="text-center text-xs font-bold uppercase text-white">{col.tag}</p>
                 </div>
-                <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                <div className="absolute inset-0 bg-black/50 opacity-100 transition-opacity flex items-center justify-center">
                   <button onClick={() => handleDeleteCollection(col.tag)} className="bg-red-500 p-2 rounded-full text-white hover:bg-red-600"><Trash2 className="w-4 h-4" /></button>
                 </div>
               </div>
@@ -600,9 +601,9 @@ const AdminWebsite: React.FC = () => {
           </div>
           <div className="flex flex-wrap gap-2">
             {tags.map(tag => (
-              <span key={tag._id} className="bg-zinc-800 text-zinc-300 px-4 py-2 rounded-full text-xs font-bold uppercase border border-white/5 flex items-center gap-2 group hover:border-red-500 hover:text-white transition-colors">
+              <span key={tag._id} className="bg-zinc-800 text-zinc-300 px-4 py-2 rounded-full text-xs font-bold uppercase border border-white/5 flex items-center gap-2 transition-colors">
                 {tag.name}
-                <button onClick={() => handleDeleteTag(tag._id)} className="opacity-0 group-hover:opacity-100 transition-opacity text-red-500 hover:text-red-400">
+                <button onClick={() => handleDeleteTag(tag._id)} className="opacity-100 transition-opacity text-red-500 hover:text-red-400">
                     <Trash2 className="w-3 h-3" />
                 </button>
               </span>
@@ -642,7 +643,17 @@ const AdminWebsite: React.FC = () => {
             <div className="flex gap-4 items-end">
               <div className="flex-grow">
                 <label className="block text-xs font-bold uppercase text-zinc-500 mb-2">Upload Image</label>
-                <input type="file" onChange={e => setNewReviewFile(e.target.files?.[0] || null)} className="text-xs text-zinc-400" />
+                <div className="relative">
+                  <input
+                    type="file"
+                    onChange={e => setNewReviewFile(e.target.files?.[0] || null)}
+                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+                  />
+                  <div className="flex items-center justify-center gap-2 w-full px-4 py-3 rounded-lg border border-zinc-700 bg-zinc-900 text-zinc-300 hover:border-white/70 hover:text-white transition-all text-xs font-bold uppercase">
+                    <Upload className="w-4 h-4" />
+                    <span>{newReviewFile ? newReviewFile.name : 'Choose Image'}</span>
+                  </div>
+                </div>
               </div>
               <button onClick={handleUploadReview} className="bg-green-500 text-black px-6 py-2 rounded-lg font-bold uppercase text-xs">Upload</button>
             </div>
@@ -650,9 +661,9 @@ const AdminWebsite: React.FC = () => {
 
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {reviews.map(review => (
-              <div key={review._id} className="relative group aspect-[3/4] bg-zinc-900 border border-white/5 rounded-lg overflow-hidden">
+              <div key={review._id} className="relative aspect-[3/4] bg-zinc-900 border border-white/5 rounded-lg overflow-hidden">
                 <img src={review.imageUrl} className="w-full h-full object-cover" alt="Review" />
-                <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                <div className="absolute inset-0 bg-black/50 opacity-100 transition-opacity flex items-center justify-center">
                   <button onClick={() => handleDeleteReview(review._id)} className="bg-red-500 p-2 rounded-full text-white hover:bg-red-600"><Trash2 className="w-4 h-4" /></button>
                 </div>
               </div>
