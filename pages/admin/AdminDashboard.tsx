@@ -432,16 +432,14 @@ const AdminDashboard: React.FC = () => {
                     className="bg-transparent text-white text-xs font-bold px-2 py-1 outline-none"
                 />
             </div>
-
-          <div className="bg-zinc-900 border border-green-500/20 px-4 py-2 rounded-lg flex items-center space-x-3 shadow-[0_0_15px_rgba(34,197,94,0.1)]">
-            <div className="relative">
-              <div className="w-3 h-3 bg-green-500 rounded-full animate-ping absolute top-0 left-0"></div>
-              <div className="w-3 h-3 bg-green-500 rounded-full relative z-10"></div>
+          
+          <div className="bg-zinc-900 border border-blue-500/20 px-4 py-2 rounded-lg flex items-center space-x-3 shadow-[0_0_15px_rgba(59,130,246,0.1)]">
+            <div className="p-2 rounded-lg bg-blue-500/10 text-blue-500">
+              <Users className="w-5 h-5" />
             </div>
             <div>
-              <p className="text-[10px] text-zinc-400 font-bold uppercase tracking-wider">Live Users</p>
-              <p className="text-lg font-black text-white leading-none">{activeUsers}</p>
-            </div>
+              <p className="text-[10px] text-zinc-400 font-bold uppercase tracking-wider">Total Users</p>
+              <p className="text-lg font-black text-white leading-none">{users.length}</p>            </div>
           </div>
           <button className="bg-zinc-800 hover:bg-zinc-700 text-white px-6 py-2 rounded-lg text-sm font-bold flex items-center space-x-2 transition-all">
             <TrendingUp className="w-4 h-4" />
