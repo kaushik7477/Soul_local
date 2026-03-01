@@ -1,6 +1,6 @@
 
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 import { ArrowRight, Truck, RefreshCcw, CreditCard, Clock, Upload, X, User } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import ProductCard from '../components/ProductCard';
@@ -19,6 +19,7 @@ interface HomePageProps {
 }
 
 const HomePage: React.FC<HomePageProps> = ({ products, addToCart, toggleWishlist, wishlist, user, setUser }) => {
+  const navigate = useNavigate();
   const [heroIndex, setHeroIndex] = useState(0);
   const [isTransitioning, setIsTransitioning] = useState(true);
   const [heroImages, setHeroImages] = useState<{imageUrl: string, sku: string}[]>([]);
@@ -53,22 +54,7 @@ const HomePage: React.FC<HomePageProps> = ({ products, addToCart, toggleWishlist
   };
 
   const handleLogin = () => {
-    // Mock Login
-    setUser({
-        id: 'mock-user-id',
-        name: 'Vibe User',
-        email: 'user@soulstich.com',
-        phone: '9999999999',
-        addresses: [],
-        orders: [],
-        wishlist: [],
-        status: 'active',
-        lastActive: new Date().toISOString(),
-        createdAt: new Date().toISOString()
-    });
-    setShowLoginPrompt(false);
-    setReviewForm({ rating: 0, comment: '' }); // Reset on open
-    setIsUploadModalOpen(true);
+    navigate('/auth');
   };
 
   const handleCustomerUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -462,13 +448,13 @@ const HomePage: React.FC<HomePageProps> = ({ products, addToCart, toggleWishlist
                       
                       {/* Star Rating Overlay */}
                       {r.rating && (
-                        <div className="absolute top-1 right-0 bg-gradient-to-r from-green-500 via-green-500 to-black pl-4 pr-2 py-1.5 rounded-l-full flex items-center shadow-lg border-y border-l border-white/10">
+                        <div className="absolute top-2 right-2 bg-black/80 px-2 py-1 rounded-md flex items-center shadow-lg border border-white/10">
                            <div className="flex gap-0.5">
                               {[1, 2, 3, 4, 5].map((star) => (
                                 <svg 
                                   key={star}
                                   viewBox="0 0 24 24" 
-                                  className={`w-4 h-4 ${star <= r.rating ? 'text-black' : 'text-white'}`}
+                                  className={`w-3 h-3 ${star <= r.rating ? 'text-amber-400' : 'text-zinc-600'}`}
                                   fill="currentColor"
                                 >
                                   <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
@@ -481,7 +467,7 @@ const HomePage: React.FC<HomePageProps> = ({ products, addToCart, toggleWishlist
                       {/* Comment Preview */}
                       {r.comment && (
                         <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/90 to-transparent">
-                          <p className="text-xs text-zinc-200 line-clamp-2 italic font-medium leading-relaxed">
+                          <p className="text-sm text-zinc-200 line-clamp-2 italic font-medium leading-relaxed">
                             "{r.comment}"
                           </p>
                         </div>
@@ -506,13 +492,13 @@ const HomePage: React.FC<HomePageProps> = ({ products, addToCart, toggleWishlist
                       
                       {/* Star Rating Overlay */}
                       {r.rating && (
-                        <div className="absolute top-1 right-0 bg-gradient-to-r from-green-500 via-green-500 to-black pl-4 pr-2 py-1.5 rounded-l-full flex items-center shadow-lg border-y border-l border-white/10">
+                        <div className="absolute top-2 right-2 bg-black/80 px-2 py-1 rounded-md flex items-center shadow-lg border border-white/10">
                            <div className="flex gap-0.5">
                               {[1, 2, 3, 4, 5].map((star) => (
                                 <svg 
                                   key={star}
                                   viewBox="0 0 24 24" 
-                                  className={`w-4 h-4 ${star <= r.rating ? 'text-black' : 'text-white'}`}
+                                  className={`w-3 h-3 ${star <= r.rating ? 'text-amber-400' : 'text-zinc-600'}`}
                                   fill="currentColor"
                                 >
                                   <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
@@ -525,7 +511,7 @@ const HomePage: React.FC<HomePageProps> = ({ products, addToCart, toggleWishlist
                       {/* Comment Preview */}
                       {r.comment && (
                         <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/90 to-transparent">
-                          <p className="text-xs text-zinc-200 line-clamp-2 italic font-medium leading-relaxed">
+                          <p className="text-sm text-zinc-200 line-clamp-2 italic font-medium leading-relaxed">
                             "{r.comment}"
                           </p>
                         </div>
@@ -555,13 +541,13 @@ const HomePage: React.FC<HomePageProps> = ({ products, addToCart, toggleWishlist
                       
                       {/* Star Rating Overlay */}
                       {r.rating && (
-                        <div className="absolute top-1 right-0 bg-gradient-to-r from-green-500 via-green-500 to-black pl-4 pr-2 py-1.5 rounded-l-full flex items-center shadow-lg border-y border-l border-white/10">
+                        <div className="absolute top-2 right-2 bg-black/80 px-2 py-1 rounded-md flex items-center shadow-lg border border-white/10">
                            <div className="flex gap-0.5">
                               {[1, 2, 3, 4, 5].map((star) => (
                                 <svg 
                                   key={star}
                                   viewBox="0 0 24 24" 
-                                  className={`w-4 h-4 ${star <= r.rating ? 'text-black' : 'text-white'}`}
+                                  className={`w-3 h-3 ${star <= r.rating ? 'text-amber-400' : 'text-zinc-600'}`}
                                   fill="currentColor"
                                 >
                                   <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
@@ -574,7 +560,7 @@ const HomePage: React.FC<HomePageProps> = ({ products, addToCart, toggleWishlist
                       {/* Comment Preview */}
                       {r.comment && (
                         <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/90 to-transparent">
-                          <p className="text-xs text-zinc-200 line-clamp-2 italic font-medium leading-relaxed">
+                          <p className="text-sm text-zinc-200 line-clamp-2 italic font-medium leading-relaxed">
                             "{r.comment}"
                           </p>
                         </div>
@@ -599,13 +585,13 @@ const HomePage: React.FC<HomePageProps> = ({ products, addToCart, toggleWishlist
                       
                       {/* Star Rating Overlay */}
                       {r.rating && (
-                        <div className="absolute top-1 right-0 bg-gradient-to-r from-green-500 via-green-500 to-black pl-4 pr-2 py-1.5 rounded-l-full flex items-center shadow-lg border-y border-l border-white/10">
+                        <div className="absolute top-2 right-2 bg-black/80 px-2 py-1 rounded-md flex items-center shadow-lg border border-white/10">
                            <div className="flex gap-0.5">
                               {[1, 2, 3, 4, 5].map((star) => (
                                 <svg 
                                   key={star}
                                   viewBox="0 0 24 24" 
-                                  className={`w-4 h-4 ${star <= r.rating ? 'text-black' : 'text-white'}`}
+                                  className={`w-3 h-3 ${star <= r.rating ? 'text-amber-400' : 'text-zinc-600'}`}
                                   fill="currentColor"
                                 >
                                   <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
@@ -618,7 +604,7 @@ const HomePage: React.FC<HomePageProps> = ({ products, addToCart, toggleWishlist
                       {/* Comment Preview */}
                       {r.comment && (
                         <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/90 to-transparent">
-                          <p className="text-xs text-zinc-200 line-clamp-2 italic font-medium leading-relaxed">
+                          <p className="text-sm text-zinc-200 line-clamp-2 italic font-medium leading-relaxed">
                             "{r.comment}"
                           </p>
                         </div>
@@ -814,13 +800,13 @@ const HomePage: React.FC<HomePageProps> = ({ products, addToCart, toggleWishlist
                         <img src={selectedReview.imageUrl} className="w-full h-full object-cover" alt="Review" />
                         
                         {/* Star Rating Overlay in Popup */}
-                        <div className="absolute top-1 right-0 bg-gradient-to-r from-green-500 via-green-500 to-black pl-5 pr-3 py-2 rounded-l-full flex items-center shadow-2xl border-y border-l border-white/10">
-                           <div className="flex gap-1">
+                        <div className="absolute top-2 right-2 bg-black/80 px-2 py-1 rounded-md flex items-center shadow-2xl border border-white/10">
+                           <div className="flex gap-0.5">
                               {[1, 2, 3, 4, 5].map((star) => (
                                 <svg 
                                   key={star}
                                   viewBox="0 0 24 24" 
-                                  className={`w-5 h-5 ${star <= (selectedReview.rating || 5) ? 'text-black' : 'text-white'}`}
+                                  className={`w-3 h-3 ${star <= (selectedReview.rating || 5) ? 'text-amber-400' : 'text-zinc-600'}`}
                                   fill="currentColor"
                                 >
                                   <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
@@ -832,7 +818,7 @@ const HomePage: React.FC<HomePageProps> = ({ products, addToCart, toggleWishlist
 
                     <div className="w-full md:w-1/2 p-6 md:p-8 flex flex-col justify-center space-y-6 bg-zinc-900">
                         <div className="space-y-4">
-                            <p className="text-lg md:text-xl font-medium text-white italic leading-relaxed">
+                            <p className="text-xl md:text-2xl font-medium text-white italic leading-relaxed">
                                 "{selectedReview.comment || 'Amazing product!'}"
                             </p>
                             <div className="pt-4 border-t border-white/5">
