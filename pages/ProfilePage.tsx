@@ -8,6 +8,7 @@ import {
 import { motion, AnimatePresence } from 'framer-motion';
 import { User, Order, Address, Product } from '../types';
 import { fetchOrders, fetchProducts, updateUser, logoutUser, mapOrder } from '../src/api';
+import { INDIAN_STATES } from '../constants';
 
 interface ProfilePageProps {
   user: User;
@@ -857,7 +858,17 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ user, setUser, wishlistCount 
                   </div>
                   <div>
                      <label className="block text-xs text-zinc-400 mb-1 uppercase tracking-wider">State</label>
-                     <input required name="state" defaultValue={editingAddress?.state} className="w-full bg-black border border-zinc-800 rounded-xl p-3 text-sm focus:border-green-500 outline-none transition-colors" />
+                     <select 
+                        required 
+                        name="state" 
+                        defaultValue={editingAddress?.state} 
+                        className="w-full bg-black border border-zinc-800 rounded-xl p-3 text-sm focus:border-green-500 outline-none transition-colors appearance-none cursor-pointer"
+                     >
+                        <option value="" disabled>Select State</option>
+                        {INDIAN_STATES.map(state => (
+                           <option key={state} value={state}>{state}</option>
+                        ))}
+                     </select>
                   </div>
                 </div>
                 <div className="grid grid-cols-2 gap-4">

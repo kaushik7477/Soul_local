@@ -9,6 +9,7 @@ import {
 import { motion, AnimatePresence } from 'framer-motion';
 import { Order, Product, User, Address } from '../types';
 import { fetchOrders, fetchProducts, updateOrder, uploadImage, mapOrder } from '../src/api';
+import { downloadInvoice } from '@/src/utils/pdfGenerator';
 
 interface OrderDetailsPageProps {
   user: User;
@@ -185,101 +186,9 @@ const OrderDetailsPage: React.FC<OrderDetailsPageProps> = ({ user, products }) =
     }
   };
 
-  const generateInvoice = () => {
+  const generateInvoice = async () => {
     if (!order) return;
-    const orderIdStr = (order as any).orderCode || order.id || (order as any)._id;
-    const invoiceWindow = window.open('', '_blank');
-    invoiceWindow?.document.write(`
-        <html>
-            <head>
-                <title>Invoice #${orderIdStr}</title>
-                <style>
-                    body { font-family: sans-serif; padding: 40px; max-width: 800px; margin: 0 auto; background: #fff; color: #000; }
-                    .header { display: flex; justify-content: space-between; margin-bottom: 40px; border-bottom: 2px solid #000; padding-bottom: 20px; }
-                    .logo { font-size: 24px; font-weight: bold; text-transform: uppercase; letter-spacing: 2px; }
-                    .info { margin-bottom: 30px; display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
-                    .info h3 { font-size: 12px; text-transform: uppercase; color: #666; margin-bottom: 10px; }
-                    .info p { margin: 2px 0; font-size: 14px; }
-                    table { width: 100%; border-collapse: collapse; margin-top: 30px; }
-                    th, td { border-bottom: 1px solid #eee; padding: 15px 10px; text-align: left; }
-                    th { text-transform: uppercase; font-size: 11px; color: #666; letter-spacing: 1px; }
-                    .total-section { margin-top: 30px; border-top: 2px solid #000; padding-top: 20px; text-align: right; }
-                    .total-row { display: flex; justify-content: flex-end; gap: 50px; margin-bottom: 10px; }
-                    .total-label { font-size: 12px; text-transform: uppercase; color: #666; }
-                    .total-value { font-weight: bold; width: 100px; }
-                    .grand-total { font-size: 20px; margin-top: 10px; }
-                    .footer { margin-top: 60px; text-align: center; font-size: 10px; color: #999; text-transform: uppercase; letter-spacing: 1px; }
-                </style>
-            </head>
-            <body>
-                <div class="header">
-                    <div class="logo">SOUL STICH</div>
-                    <div style="text-align: right">
-                        <p style="margin: 0; font-weight: bold;">INVOICE</p>
-                        <p style="margin: 5px 0 0 0; font-size: 12px; color: #666;">#${orderIdStr}</p>
-                    </div>
-                </div>
-                <div class="info">
-                    <div>
-                        <h3>Billing Details</h3>
-                        <p>${user.name}</p>
-                        <p>${user.phone}</p>
-                        <p>${user.email}</p>
-                    </div>
-                    <div style="text-align: right">
-                        <h3>Order Details</h3>
-                        <p>Date: ${new Date(order.createdAt).toLocaleDateString()}</p>
-                        <p>Status: ${order.status.toUpperCase()}</p>
-                        <p>Payment: ${order.paymentStatus.toUpperCase()}</p>
-                    </div>
-                </div>
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Product</th>
-                            <th>Size</th>
-                            <th>Qty</th>
-                            <th>Price</th>
-                            <th>Total</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${order.products.map(p => {
-                            const prod = getProduct(p.productId);
-                            return `
-                                <tr>
-                                    <td>${prod?.name || 'Artifact'}</td>
-                                    <td>${p.size}</td>
-                                    <td>${p.quantity}</td>
-                                    <td>₹${p.price}</td>
-                                    <td>₹${p.price * p.quantity}</td>
-                                </tr>
-                            `;
-                        }).join('')}
-                    </tbody>
-                </table>
-                <div class="total-section">
-                    <div class="total-row">
-                        <span class="total-label">Subtotal</span>
-                        <span class="total-value">₹${order.totalAmount}</span>
-                    </div>
-                    <div class="total-row">
-                        <span class="total-label">Shipping</span>
-                        <span class="total-value">FREE</span>
-                    </div>
-                    <div class="total-row grand-total">
-                        <span class="total-label" style="color: #000; font-weight: 900;">Total Amount</span>
-                        <span class="total-value">₹${order.totalAmount}</span>
-                    </div>
-                </div>
-                <div class="footer">
-                    <p>Thank you for choosing Soul Stich. Pushing boundaries through innovation.</p>
-                    <p style="margin-top: 10px;">soulstich.store@gmail.com | +91 6289388029</p>
-                </div>
-            </body>
-        </html>
-    `);
-    invoiceWindow?.document.close();
+    await downloadInvoice(order, user, products);
   };
 
   if (loading) return (

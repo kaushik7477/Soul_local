@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { ShoppingBag, Trash2, MapPin, Ticket, ShieldCheck, ChevronRight, ChevronLeft, ChevronDown, Plus, LogIn, Lock, Gift, Check, AlertCircle } from 'lucide-react';
 import { Product, User, Coupon, FreeGift, Address } from '../types';
 import { fetchCoupons, fetchFreeGifts, updateUser, createRazorpayOrder, verifyRazorpayPayment } from '../src/api';
+import { INDIAN_STATES } from '../constants';
 
 interface CartPageProps {
   cart: { productId: string; quantity: number; size: string; isGift?: boolean }[];
@@ -146,13 +147,11 @@ const CartPage: React.FC<CartPageProps> = ({ cart, addToCart, updateCartItem, up
 
   // Initialize selected address
   useEffect(() => {
-    if (user && user.addresses && user.addresses.length > 0) {
+    if (user && user.addresses && user.addresses.length > 0 && !selectedAddress) {
       const defaultAddr = user.addresses.find(a => a.isDefault) || user.addresses[0];
       setSelectedAddress(defaultAddr);
-    } else {
-      setSelectedAddress(null);
     }
-  }, [user]);
+  }, [user, selectedAddress]);
 
   const cartItems = cart.map(item => ({
     ...item,
@@ -219,6 +218,32 @@ const CartPage: React.FC<CartPageProps> = ({ cart, addToCart, updateCartItem, up
   const userAddresses = user?.addresses || [];
   const sortedAddresses = [...userAddresses].sort((a, b) => (b.isDefault ? 1 : 0) - (a.isDefault ? 1 : 0));
 
+  const handleDeleteAddress = async (addressId: string, e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent selecting the address when clicking delete
+    if (!user || !setUser) return;
+    
+    const confirmDelete = window.confirm("Are you sure you want to delete this address?");
+    if (!confirmDelete) return;
+
+    const updatedAddresses = user.addresses.filter(a => a.id !== addressId);
+    
+    // If we deleted the default address, make another one default if available
+    if (updatedAddresses.length > 0 && !updatedAddresses.some(a => a.isDefault)) {
+      updatedAddresses[0].isDefault = true;
+    }
+
+    try {
+      const updatedUser = await updateUser(user.id, { addresses: updatedAddresses });
+      setUser(updatedUser);
+      // If the deleted address was selected, select the new default or null
+      if (selectedAddress?.id === addressId) {
+        setSelectedAddress(updatedAddresses.find(a => a.isDefault) || updatedAddresses[0] || null);
+      }
+    } catch (error) {
+      console.error("Failed to delete address", error);
+      alert("Failed to delete address. Please try again.");
+    }
+  };
 
   const handleSaveAddress = async () => {
     if (!user || !setUser) return;
@@ -452,6 +477,12 @@ const CartPage: React.FC<CartPageProps> = ({ cart, addToCart, updateCartItem, up
                         className="bg-black border border-white/10 p-3 rounded-lg text-sm text-white placeholder-zinc-600 focus:border-green-500 outline-none transition-colors"
                      />
                      <input 
+                          placeholder="Road Name / Area / Colony" 
+                          value={newAddress.roadName || ''}
+                          onChange={e => setNewAddress({...newAddress, roadName: e.target.value})}
+                          className="w-full bg-black border border-white/10 p-3 rounded-lg text-sm text-white placeholder-zinc-600 focus:border-green-500 outline-none transition-colors"
+                       />
+                     <input 
                         placeholder="Pincode" 
                         value={newAddress.pincode || ''}
                         onChange={e => setNewAddress({...newAddress, pincode: e.target.value})}
@@ -463,19 +494,23 @@ const CartPage: React.FC<CartPageProps> = ({ cart, addToCart, updateCartItem, up
                         onChange={e => setNewAddress({...newAddress, city: e.target.value})}
                         className="bg-black border border-white/10 p-3 rounded-lg text-sm text-white placeholder-zinc-600 focus:border-green-500 outline-none transition-colors"
                      />
-                     <input 
-                        placeholder="State" 
+                     <select 
                         value={newAddress.state || ''}
                         onChange={e => setNewAddress({...newAddress, state: e.target.value})}
-                        className="bg-black border border-white/10 p-3 rounded-lg text-sm text-white placeholder-zinc-600 focus:border-green-500 outline-none transition-colors"
-                     />
+                        className="bg-black border border-white/10 p-3 rounded-lg text-sm text-white focus:border-green-500 outline-none transition-colors appearance-none cursor-pointer"
+                     >
+                        <option value="" disabled>Select State</option>
+                        {INDIAN_STATES.map(state => (
+                           <option key={state} value={state}>{state}</option>
+                        ))}
+                     </select>
                      <div className="md:col-span-2">
-                       <input 
+                       {/* <input 
                           placeholder="Road Name / Area / Colony" 
                           value={newAddress.roadName || ''}
                           onChange={e => setNewAddress({...newAddress, roadName: e.target.value})}
                           className="w-full bg-black border border-white/10 p-3 rounded-lg text-sm text-white placeholder-zinc-600 focus:border-green-500 outline-none transition-colors"
-                       />
+                       /> */}
                      </div>
                   </div>
                   <button 
@@ -512,10 +547,19 @@ const CartPage: React.FC<CartPageProps> = ({ cart, addToCart, updateCartItem, up
                                  setSelectedAddress(addr);
                                  setIsAddressDropdownOpen(false);
                                }}
-                               className={`p-4 border-b border-white/5 cursor-pointer hover:bg-white/5 transition-colors ${selectedAddress.id === addr.id ? 'bg-white/5' : ''}`}
+                               className={`p-4 border-b border-white/5 cursor-pointer hover:bg-white/5 transition-colors flex justify-between items-center ${selectedAddress.id === addr.id ? 'bg-white/5' : ''}`}
                              >
-                               <p className="font-bold text-white text-sm">{addr.receiverName}</p>
-                               <p className="text-xs text-zinc-400">{addr.apartment}, {addr.roadName}, {addr.city}, {addr.state} - {addr.pincode}</p>
+                               <div className="flex-grow">
+                                 <p className="font-bold text-white text-sm">{addr.receiverName}</p>
+                                 <p className="text-xs text-zinc-400">{addr.apartment}, {addr.roadName}, {addr.city}, {addr.state} - {addr.pincode}</p>
+                               </div>
+                               <button 
+                                 onClick={(e) => handleDeleteAddress(addr.id, e)}
+                                 className="p-2 text-zinc-500 hover:text-red-500 transition-colors ml-4"
+                                 title="Delete Address"
+                               >
+                                 <Trash2 className="w-4 h-4" />
+                               </button>
                              </div>
                            ))}
                            <button 

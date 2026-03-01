@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import { fetchOrders, updateOrder, fetchUsers, fetchProducts, socket, uploadImage, mapOrder, bookShiprocket } from '../../src/api';
 import { Order, User, Product, OrderStatus } from '../../types';
+import { downloadInvoice } from '@/src/utils/pdfGenerator';
 
 // --- Types ---
 type Tab = 'radar' | 'kanban' | 'list' | 'billing';
@@ -243,85 +244,13 @@ const AdminOrders: React.FC = () => {
     setAddressErrors(prev => ({ ...prev, [orderId]: !isValid }));
   };
 
-  const generateInvoice = (order: Order) => {
+  const generateInvoice = async (order: Order) => {
     const user = users.find(u => (u.id || (u as any)._id) === order.userId);
-    const orderId = (order as any).orderCode || order.id || (order as any)._id;
-    const invoiceWindow = window.open('', '_blank');
-    invoiceWindow?.document.write(`
-        <html>
-            <head>
-                <title>Invoice #${orderId}</title>
-                <style>
-                    body { font-family: sans-serif; padding: 40px; max-width: 800px; margin: 0 auto; }
-                    .header { display: flex; justify-content: space-between; margin-bottom: 40px; border-bottom: 2px solid #000; padding-bottom: 20px; }
-                    .logo { font-size: 24px; font-weight: bold; text-transform: uppercase; }
-                    table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-                    th, td { border-bottom: 1px solid #ddd; padding: 12px 8px; text-align: left; }
-                    th { background-color: #f8f8f8; font-weight: bold; }
-                    .total { margin-top: 20px; text-align: right; font-size: 18px; font-weight: bold; }
-                    .footer { margin-top: 40px; text-align: center; font-size: 12px; color: #666; }
-                </style>
-            </head>
-            <body>
-                <div class="header">
-                    <div class="logo">SOULSTICH</div>
-                    <div style="text-align: right;">
-                        <p style="margin: 0; font-weight: bold;">INVOICE</p>
-                        <p style="margin: 5px 0 0; color: #666;">#${orderId}</p>
-                        <p style="margin: 5px 0 0; color: #666;">${new Date(order.createdAt).toLocaleDateString()}</p>
-                    </div>
-                </div>
-                
-                <div style="margin-bottom: 40px; display: flex; justify-content: space-between;">
-                    <div>
-                        <strong style="display: block; margin-bottom: 5px; color: #666;">BILL TO:</strong>
-                        <div style="font-size: 16px; font-weight: bold;">${user?.name || 'N/A'}</div>
-                        <div>${user?.email || 'N/A'}</div>
-                    </div>
-                    <div style="text-align: right;">
-                        <strong style="display: block; margin-bottom: 5px; color: #666;">PAYMENT STATUS:</strong>
-                        <div style="font-weight: bold; color: ${order.paymentStatus === 'paid' ? 'green' : 'orange'}">
-                            ${order.paymentStatus.toUpperCase()}
-                        </div>
-                    </div>
-                </div>
-
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Item</th>
-                            <th>Size</th>
-                            <th>Qty</th>
-                            <th style="text-align: right;">Price</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        ${order.products.map(p => {
-                            const product = products.find(prod => (prod.id || (prod as any)._id) === p.productId);
-                            return `
-                                <tr>
-                                    <td>${product?.name || 'Product'} <br><span style="font-size: 10px; color: #666;">${p.productId}</span></td>
-                                    <td>${p.size}</td>
-                                    <td>${p.quantity}</td>
-                                    <td style="text-align: right;">₹${p.price}</td>
-                                </tr>
-                            `;
-                        }).join('')}
-                    </tbody>
-                </table>
-
-                <div class="total">
-                    Total Amount: ₹${order.totalAmount}
-                </div>
-
-                <div class="footer">
-                    <p>Thank you for shopping with SoulStich!</p>
-                    <p>For support, contact support@soulstich.com</p>
-                </div>
-            </body>
-        </html>
-    `);
-    invoiceWindow?.document.close();
+    if (!user) {
+      alert("Customer details not found.");
+      return;
+    }
+    await downloadInvoice(order, user, products);
   };
 
   const handleBookShiprocket = async (orderIds: string[]) => {

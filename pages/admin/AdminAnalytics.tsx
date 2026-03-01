@@ -10,13 +10,7 @@ import {
   Target, Zap, Users, Wallet, Activity, PieChart
 } from 'lucide-react';
 import { fetchOrders, fetchUsers, fetchProducts } from '../../src/api';
-import { Order, User, Product } from '../../types';
-
-// Mock Indian States for Geo Analytics (In a real app, you'd extract this from addresses)
-const INDIAN_STATES = [
-  'Maharashtra', 'Karnataka', 'Delhi', 'Tamil Nadu', 'Gujarat', 
-  'Uttar Pradesh', 'West Bengal', 'Telangana', 'Rajasthan', 'Kerala'
-];
+import { Order, User, Product, Address } from '../../types';
 
 const COLORS = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6', '#ec4899'];
 
@@ -49,6 +43,37 @@ const AdminAnalytics: React.FC = () => {
     }
   };
 
+  // Helper to get address from order
+  const getOrderAddress = (order: Order, user?: User): Address | null => {
+    const o: any = order;
+    const u: any = user;
+    let addr: any;
+
+    if (u?.addresses && u.addresses.length > 0) {
+      addr = u.addresses.find((a: any) => a.id === o.addressId || a._id === o.addressId);
+    }
+
+    if (!addr) addr = o.address || o.shippingAddress || o.shipping_address;
+
+    if (!addr && o.addressData) {
+      try {
+        addr = JSON.parse(o.addressData);
+      } catch (e) {}
+    }
+
+    if (!addr && u?.addresses && u.addresses.length > 0) {
+      addr = u.addresses[0];
+    }
+
+    if (typeof addr === 'string') {
+      try {
+        addr = JSON.parse(addr);
+      } catch (e) {}
+    }
+
+    return addr;
+  };
+
   // --- Geographic Processing ---
   const geoStats = useMemo(() => {
     const stats: Record<string, { 
@@ -60,14 +85,11 @@ const AdminAnalytics: React.FC = () => {
     }> = {};
 
     orders.forEach(order => {
-      // Find user and their default address to get state/pincode
-      const user = users.find(u => u.id === order.userId);
-      const address = user?.addresses?.find(a => a.id === order.addressId) || user?.addresses?.[0];
+      const user = users.find(u => (u.id || (u as any)._id) === order.userId);
+      const address = getOrderAddress(order, user);
       
-      // Since real addresses might be messy, we'll mock state mapping if not clear
-      // In production, you'd use a proper mapping service or normalized data
-      const state = INDIAN_STATES[Math.floor(Math.random() * INDIAN_STATES.length)]; 
-      const pincode = address?.pincode || '400001';
+      const state = address?.state || 'Unknown';
+      const pincode = address?.pincode || 'N/A';
 
       if (!stats[state]) {
         stats[state] = { orders: 0, cancelled: 0, returned: 0, revenue: 0, pincodes: {} };
