@@ -37,15 +37,17 @@ const HomePage: React.FC<HomePageProps> = ({ products, addToCart, toggleWishlist
   const [bestSellersConfig, setBestSellersConfig] = useState<{productSkus: string[]}>({ productSkus: [] });
   const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
   const [uploadingReview, setUploadingReview] = useState(false);
+  const [selectedReview, setSelectedReview] = useState<any>(null);
   
   // Login & Review State
   const [showLoginPrompt, setShowLoginPrompt] = useState(false);
-  const [reviewForm, setReviewForm] = useState({ name: '', phone: '' });
+  const [reviewForm, setReviewForm] = useState({ rating: 0, comment: '' });
 
   const handleVibeClick = () => {
     if (!user) {
       setShowLoginPrompt(true);
     } else {
+      setReviewForm({ rating: 0, comment: '' }); // Reset on open
       setIsUploadModalOpen(true);
     }
   };
@@ -65,14 +67,20 @@ const HomePage: React.FC<HomePageProps> = ({ products, addToCart, toggleWishlist
         createdAt: new Date().toISOString()
     });
     setShowLoginPrompt(false);
+    setReviewForm({ rating: 0, comment: '' }); // Reset on open
     setIsUploadModalOpen(true);
   };
 
   const handleCustomerUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (!e.target.files || !e.target.files[0]) return;
+    if (!e.target.files || !e.target.files[0] || !user) return;
     
-    if (!reviewForm.name || !reviewForm.phone) {
-        alert("Please enter your name and phone number first.");
+    if (reviewForm.rating === 0) {
+        alert("Please select a star rating.");
+        return;
+    }
+
+    if (!reviewForm.comment.trim()) {
+        alert("Please tell us about your experience.");
         return;
     }
 
@@ -81,15 +89,17 @@ const HomePage: React.FC<HomePageProps> = ({ products, addToCart, toggleWishlist
         const imageUrl = await uploadImage(e.target.files[0]);
         
         await createReview({
-            customerName: reviewForm.name,
-            userPhone: reviewForm.phone,
+            customerName: user.name,
+            userPhone: user.phone || '',
             imageUrl: imageUrl,
+            rating: reviewForm.rating,
+            comment: reviewForm.comment,
             isApproved: false
         });
         
         alert("Thanks for your vibe! Your photo is under review.");
         setIsUploadModalOpen(false);
-        setReviewForm({ name: '', phone: '' });
+        setReviewForm({ rating: 5, comment: '' });
     } catch (error) {
         // console.error("Upload failed", error);
         alert("Upload failed. Please try again.");
@@ -442,9 +452,40 @@ const HomePage: React.FC<HomePageProps> = ({ products, addToCart, toggleWishlist
                     
                  ];
                  const rowReviews = [...reviews, ...defaultImages.map(url => ({ imageUrl: url }))].slice(0, 10);
-                 return rowReviews.map((r, i) => (
-                    <div key={i} className="w-60 h-80 bg-zinc-900 border border-white/5 rounded-xl overflow-hidden flex-shrink-0">
-                      <img src={r.imageUrl} className="w-full h-full object-cover opacity-80" alt="Review" />
+                 return rowReviews.map((r: any, i) => (
+                    <div 
+                      key={i} 
+                      onClick={() => setSelectedReview(r)}
+                      className="w-60 h-80 bg-zinc-900 border border-white/5 rounded-xl overflow-hidden flex-shrink-0 relative group cursor-pointer"
+                    >
+                      <img src={r.imageUrl} className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" alt="Review" />
+                      
+                      {/* Star Rating Overlay */}
+                      {r.rating && (
+                        <div className="absolute top-1 right-0 bg-gradient-to-r from-green-500 via-green-500 to-black pl-4 pr-2 py-1.5 rounded-l-full flex items-center shadow-lg border-y border-l border-white/10">
+                           <div className="flex gap-0.5">
+                              {[1, 2, 3, 4, 5].map((star) => (
+                                <svg 
+                                  key={star}
+                                  viewBox="0 0 24 24" 
+                                  className={`w-4 h-4 ${star <= r.rating ? 'text-black' : 'text-white'}`}
+                                  fill="currentColor"
+                                >
+                                  <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
+                                </svg>
+                              ))}
+                           </div>
+                        </div>
+                      )}
+
+                      {/* Comment Preview */}
+                      {r.comment && (
+                        <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/90 to-transparent">
+                          <p className="text-xs text-zinc-200 line-clamp-2 italic font-medium leading-relaxed">
+                            "{r.comment}"
+                          </p>
+                        </div>
+                      )}
                     </div>
                  ));
               })()}
@@ -455,9 +496,40 @@ const HomePage: React.FC<HomePageProps> = ({ products, addToCart, toggleWishlist
                     
                  ];
                  const rowReviews = [...reviews, ...defaultImages.map(url => ({ imageUrl: url }))].slice(0, 10);
-                 return rowReviews.map((r, i) => (
-                    <div key={i + 'dup'} className="w-60 h-80 bg-zinc-900 border border-white/5 rounded-xl overflow-hidden flex-shrink-0">
-                      <img src={r.imageUrl} className="w-full h-full object-cover opacity-80" alt="Review" />
+                 return rowReviews.map((r: any, i) => (
+                    <div 
+                      key={i + 'dup'} 
+                      onClick={() => setSelectedReview(r)}
+                      className="w-60 h-80 bg-zinc-900 border border-white/5 rounded-xl overflow-hidden flex-shrink-0 relative group cursor-pointer"
+                    >
+                      <img src={r.imageUrl} className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" alt="Review" />
+                      
+                      {/* Star Rating Overlay */}
+                      {r.rating && (
+                        <div className="absolute top-1 right-0 bg-gradient-to-r from-green-500 via-green-500 to-black pl-4 pr-2 py-1.5 rounded-l-full flex items-center shadow-lg border-y border-l border-white/10">
+                           <div className="flex gap-0.5">
+                              {[1, 2, 3, 4, 5].map((star) => (
+                                <svg 
+                                  key={star}
+                                  viewBox="0 0 24 24" 
+                                  className={`w-4 h-4 ${star <= r.rating ? 'text-black' : 'text-white'}`}
+                                  fill="currentColor"
+                                >
+                                  <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
+                                </svg>
+                              ))}
+                           </div>
+                        </div>
+                      )}
+
+                      {/* Comment Preview */}
+                      {r.comment && (
+                        <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/90 to-transparent">
+                          <p className="text-xs text-zinc-200 line-clamp-2 italic font-medium leading-relaxed">
+                            "{r.comment}"
+                          </p>
+                        </div>
+                      )}
                     </div>
                  ));
               })()}
@@ -473,9 +545,40 @@ const HomePage: React.FC<HomePageProps> = ({ products, addToCart, toggleWishlist
                  // Use next 10 reviews (10-20) if available
                  const nextReviews = reviews.slice(10);
                  const rowReviews = [...nextReviews, ...defaultImages.map(url => ({ imageUrl: url }))].slice(0, 10);
-                 return rowReviews.map((r, i) => (
-                    <div key={i} className="w-60 h-80 bg-zinc-900 border border-white/5 rounded-xl overflow-hidden flex-shrink-0">
-                      <img src={r.imageUrl} className="w-full h-full object-cover opacity-80" alt="Review" />
+                 return rowReviews.map((r: any, i) => (
+                    <div 
+                      key={i} 
+                      onClick={() => setSelectedReview(r)}
+                      className="w-60 h-80 bg-zinc-900 border border-white/5 rounded-xl overflow-hidden flex-shrink-0 relative group cursor-pointer"
+                    >
+                      <img src={r.imageUrl} className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" alt="Review" />
+                      
+                      {/* Star Rating Overlay */}
+                      {r.rating && (
+                        <div className="absolute top-1 right-0 bg-gradient-to-r from-green-500 via-green-500 to-black pl-4 pr-2 py-1.5 rounded-l-full flex items-center shadow-lg border-y border-l border-white/10">
+                           <div className="flex gap-0.5">
+                              {[1, 2, 3, 4, 5].map((star) => (
+                                <svg 
+                                  key={star}
+                                  viewBox="0 0 24 24" 
+                                  className={`w-4 h-4 ${star <= r.rating ? 'text-black' : 'text-white'}`}
+                                  fill="currentColor"
+                                >
+                                  <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
+                                </svg>
+                              ))}
+                           </div>
+                        </div>
+                      )}
+
+                      {/* Comment Preview */}
+                      {r.comment && (
+                        <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/90 to-transparent">
+                          <p className="text-xs text-zinc-200 line-clamp-2 italic font-medium leading-relaxed">
+                            "{r.comment}"
+                          </p>
+                        </div>
+                      )}
                     </div>
                  ));
               })()}
@@ -486,9 +589,40 @@ const HomePage: React.FC<HomePageProps> = ({ products, addToCart, toggleWishlist
                  ];
                  const nextReviews = reviews.slice(10);
                  const rowReviews = [...nextReviews, ...defaultImages.map(url => ({ imageUrl: url }))].slice(0, 10);
-                 return rowReviews.map((r, i) => (
-                    <div key={i + 'dup'} className="w-60 h-80 bg-zinc-900 border border-white/5 rounded-xl overflow-hidden flex-shrink-0">
-                      <img src={r.imageUrl} className="w-full h-full object-cover opacity-80" alt="Review" />
+                 return rowReviews.map((r: any, i) => (
+                    <div 
+                      key={i + 'dup'} 
+                      onClick={() => setSelectedReview(r)}
+                      className="w-60 h-80 bg-zinc-900 border border-white/5 rounded-xl overflow-hidden flex-shrink-0 relative group cursor-pointer"
+                    >
+                      <img src={r.imageUrl} className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" alt="Review" />
+                      
+                      {/* Star Rating Overlay */}
+                      {r.rating && (
+                        <div className="absolute top-1 right-0 bg-gradient-to-r from-green-500 via-green-500 to-black pl-4 pr-2 py-1.5 rounded-l-full flex items-center shadow-lg border-y border-l border-white/10">
+                           <div className="flex gap-0.5">
+                              {[1, 2, 3, 4, 5].map((star) => (
+                                <svg 
+                                  key={star}
+                                  viewBox="0 0 24 24" 
+                                  className={`w-4 h-4 ${star <= r.rating ? 'text-black' : 'text-white'}`}
+                                  fill="currentColor"
+                                >
+                                  <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
+                                </svg>
+                              ))}
+                           </div>
+                        </div>
+                      )}
+
+                      {/* Comment Preview */}
+                      {r.comment && (
+                        <div className="absolute bottom-0 left-0 right-0 p-4 bg-gradient-to-t from-black/90 to-transparent">
+                          <p className="text-xs text-zinc-200 line-clamp-2 italic font-medium leading-relaxed">
+                            "{r.comment}"
+                          </p>
+                        </div>
+                      )}
                     </div>
                  ));
               })()}
@@ -585,35 +719,55 @@ const HomePage: React.FC<HomePageProps> = ({ products, addToCart, toggleWishlist
                     initial={{ scale: 0.9, opacity: 0 }}
                     animate={{ scale: 1, opacity: 1 }}
                     exit={{ scale: 0.9, opacity: 0 }}
-                    className="bg-zinc-900 border border-white/10 p-8 max-w-md w-full relative"
+                    className="bg-zinc-900 border border-white/10 p-6 max-w-[400px] w-full relative max-h-[85vh] overflow-y-auto no-scrollbar rounded-2xl"
                 >
                     <button 
                         onClick={() => setIsUploadModalOpen(false)}
-                        className="absolute top-4 right-4 text-zinc-500 hover:text-white"
+                        className="absolute top-4 right-4 text-zinc-500 hover:text-white z-20"
                     >
                         <X className="w-6 h-6" />
                     </button>
                     
-                    <h3 className="text-2xl font-black uppercase tracking-tighter mb-2">Upload Your Vibe</h3>
-                    <p className="text-zinc-500 text-sm mb-8">Show us how you style it. Your photo might be featured on our wall.</p>
+                    <h3 className="text-xl font-black uppercase tracking-tighter mb-1">Upload Your Vibe</h3>
+                    <p className="text-zinc-500 text-xs mb-6">Show us how you style it. Your photo might be featured on our wall.</p>
                     
-                    <div className="space-y-4">
-                        <input 
-                            type="text" 
-                            placeholder="Your Name"
-                            value={reviewForm.name}
-                            onChange={e => setReviewForm({...reviewForm, name: e.target.value})}
-                            className="w-full bg-zinc-800 border border-white/5 p-4 text-white placeholder-zinc-500 focus:outline-none focus:border-white/20"
-                        />
-                        <input 
-                            type="tel" 
-                            placeholder="Phone Number"
-                            value={reviewForm.phone}
-                            onChange={e => setReviewForm({...reviewForm, phone: e.target.value})}
-                            className="w-full bg-zinc-800 border border-white/5 p-4 text-white placeholder-zinc-500 focus:outline-none focus:border-white/20"
-                        />
+                    <div className="space-y-6">
+                        {/* Star Rating */}
+                        <div className="space-y-2">
+                            <label className="block text-[10px] font-black uppercase tracking-widest text-zinc-500">How would you rate it?</label>
+                            <div className="flex items-center justify-center gap-4 p-4 bg-zinc-800/50 border border-white/5 rounded-2xl">
+                                {[1, 2, 3, 4, 5].map((star) => (
+                                    <button
+                                        key={star}
+                                        onClick={() => setReviewForm({ ...reviewForm, rating: star })}
+                                        className="relative transition-all active:scale-90"
+                                    >
+                                        <svg 
+                                            viewBox="0 0 24 24" 
+                                            className={`w-8 h-8 transition-colors ${star <= reviewForm.rating ? 'text-green-500' : 'text-zinc-600'}`}
+                                            fill="currentColor"
+                                        >
+                                            <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
+                                        </svg>
+                                    </button>
+                                ))}
+                            </div>
+                        </div>
 
-                        <div className="border-2 border-dashed border-white/10 rounded-lg p-8 text-center hover:border-green-500 transition-colors cursor-pointer relative group">
+                        {/* Comment Input */}
+                        <div className="space-y-2">
+                            <label className="block text-[10px] font-black uppercase tracking-widest text-zinc-500">Share your experience</label>
+                            <textarea 
+                                placeholder="Product quality is very good etc."
+                                value={reviewForm.comment}
+                                onChange={e => setReviewForm({...reviewForm, comment: e.target.value})}
+                                rows={3}
+                                className="w-full bg-zinc-800 border border-white/5 p-4 text-white placeholder-zinc-500 focus:outline-none focus:border-white/20 rounded-xl resize-none"
+                            />
+                        </div>
+
+                        {/* Image Upload */}
+                        <div className="border-2 border-dashed border-white/10 rounded-xl p-8 text-center hover:border-green-500 transition-colors cursor-pointer relative group">
                             <input 
                                 type="file" 
                                 accept="image/*"
@@ -626,6 +780,68 @@ const HomePage: React.FC<HomePageProps> = ({ products, addToCart, toggleWishlist
                                 <span className="text-xs font-bold uppercase tracking-widest text-zinc-400 group-hover:text-white">
                                     {uploadingReview ? 'Uploading...' : 'Click to Upload'}
                                 </span>
+                            </div>
+                        </div>
+                    </div>
+                </motion.div>
+            </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Review Detail Popup */}
+      <AnimatePresence>
+        {selectedReview && (
+            <motion.div 
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                className="fixed inset-0 z-[60] flex items-center justify-center bg-black/95 p-4"
+            >
+                <motion.div 
+                    initial={{ scale: 0.9, opacity: 0 }}
+                    animate={{ scale: 1, opacity: 1 }}
+                    exit={{ scale: 0.9, opacity: 0 }}
+                    className="bg-zinc-900 border border-white/10 max-w-2xl w-[90%] md:w-full relative rounded-2xl overflow-hidden flex flex-col md:flex-row shadow-2xl max-h-[90vh] overflow-y-auto no-scrollbar"
+                >
+                    <button 
+                        onClick={() => setSelectedReview(null)}
+                        className="absolute top-4 right-4 z-20 p-2 bg-black/50 text-white rounded-full hover:bg-white hover:text-black transition-all"
+                    >
+                        <X className="w-5 h-5" />
+                    </button>
+
+                    <div className="w-full md:w-1/2 aspect-square md:aspect-auto relative min-h-[300px]">
+                        <img src={selectedReview.imageUrl} className="w-full h-full object-cover" alt="Review" />
+                        
+                        {/* Star Rating Overlay in Popup */}
+                        <div className="absolute top-1 right-0 bg-gradient-to-r from-green-500 via-green-500 to-black pl-5 pr-3 py-2 rounded-l-full flex items-center shadow-2xl border-y border-l border-white/10">
+                           <div className="flex gap-1">
+                              {[1, 2, 3, 4, 5].map((star) => (
+                                <svg 
+                                  key={star}
+                                  viewBox="0 0 24 24" 
+                                  className={`w-5 h-5 ${star <= (selectedReview.rating || 5) ? 'text-black' : 'text-white'}`}
+                                  fill="currentColor"
+                                >
+                                  <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
+                                </svg>
+                              ))}
+                           </div>
+                        </div>
+                    </div>
+
+                    <div className="w-full md:w-1/2 p-6 md:p-8 flex flex-col justify-center space-y-6 bg-zinc-900">
+                        <div className="space-y-4">
+                            <p className="text-lg md:text-xl font-medium text-white italic leading-relaxed">
+                                "{selectedReview.comment || 'Amazing product!'}"
+                            </p>
+                            <div className="pt-4 border-t border-white/5">
+                                <p className="text-sm font-black uppercase tracking-widest text-green-500">
+                                    {selectedReview.customerName || 'Anonymous User'}
+                                </p>
+                                <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest mt-1">
+                                    Verified Soul Customer
+                                </p>
                             </div>
                         </div>
                     </div>

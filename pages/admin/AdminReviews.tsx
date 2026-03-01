@@ -63,10 +63,34 @@ const AdminReviews: React.FC = () => {
                 </div>
             </div>
             <div className="p-6 space-y-4">
-                <div>
-                    <h3 className="text-lg font-bold text-white">{review.customerName || 'Anonymous'}</h3>
-                    <p className="text-zinc-500 text-sm font-mono">{review.userPhone || 'No Phone'}</p>
+                <div className="flex justify-between items-start">
+                    <div>
+                        <h3 className="text-lg font-bold text-white">{review.customerName || 'Anonymous'}</h3>
+                        <p className="text-zinc-500 text-sm font-mono">{review.userPhone || 'No Phone'}</p>
+                    </div>
+                    {review.rating && (
+                        <div className="flex gap-0.5 bg-black/40 p-1.5 rounded-lg border border-white/5">
+                            {[1, 2, 3, 4, 5].map((star) => (
+                                <svg 
+                                    key={star}
+                                    viewBox="0 0 24 24" 
+                                    className={`w-3 h-3 ${star <= review.rating ? 'text-yellow-500' : 'text-zinc-700'}`}
+                                    fill="currentColor"
+                                >
+                                    <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
+                                </svg>
+                            ))}
+                        </div>
+                    )}
                 </div>
+
+                {review.comment && (
+                    <div className="p-4 bg-black/30 border border-white/5 rounded-xl">
+                        <p className="text-xs text-zinc-400 italic">
+                            "{review.comment}"
+                        </p>
+                    </div>
+                )}
                 
                 <div className="flex gap-2 pt-4 border-t border-white/5">
                     {!review.isApproved && (
