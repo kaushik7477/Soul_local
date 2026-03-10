@@ -12,6 +12,7 @@ import Tag from '../models/Tag.js';
 import WebsiteConfig from '../models/WebsiteConfig.js';
 import Coupon from '../models/Coupon.js';
 import FreeGift from '../models/FreeGift.js';
+import Expense from '../models/Expense.js';
 // Removed duplicate Product import that was causing a SyntaxError
 import User from '../models/User.js';
 import Order from '../models/Order.js';
@@ -278,6 +279,57 @@ router.post('/tags', async (req, res) => {
 router.delete('/tags/:id', async (req, res) => {
   try {
     await Tag.findByIdAndDelete(req.params.id);
+    res.json({ message: 'Deleted' });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// --- Expenses (Operational Ledger) ---
+router.get('/expenses', async (req, res) => {
+  try {
+    const expenses = await Expense.find().sort({ date: -1, createdAt: -1 });
+    res.json(expenses);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.post('/expenses', async (req, res) => {
+  try {
+    const { category, description, amount, date } = req.body;
+    const expense = new Expense({
+      category,
+      description,
+      amount,
+      date: date ? new Date(date) : undefined,
+    });
+    await expense.save();
+    req.io.emit('expense_created', expense);
+    res.json(expense);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.put('/expenses/:id', async (req, res) => {
+  try {
+    const updateData = { ...req.body };
+    if (updateData.date) {
+      updateData.date = new Date(updateData.date);
+    }
+    const expense = await Expense.findByIdAndUpdate(req.params.id, updateData, { new: true });
+    req.io.emit('expense_updated', expense);
+    res.json(expense);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+});
+
+router.delete('/expenses/:id', async (req, res) => {
+  try {
+    await Expense.findByIdAndDelete(req.params.id);
+    req.io.emit('expense_deleted', req.params.id);
     res.json({ message: 'Deleted' });
   } catch (err) {
     res.status(500).json({ error: err.message });

@@ -55,6 +55,8 @@ const Footer: React.FC = () => {
               <li><Link to="/profile" className="hover:text-green-500 transition-colors">My Profile</Link></li>
               <li><Link to="/cart" className="hover:text-green-500 transition-colors">Shopping Bag</Link></li>
               <li><Link to="/wishlist" className="hover:text-green-500 transition-colors">Wishlist</Link></li>
+              <li><a href="https://forms.gle" target="_blank" rel="noopener noreferrer" className="text-green-500 hover:text-green-300 transition-colors">Bulk Orders & Corporate Gifts</a></li>
+              <li><a href="https://forms.gle" target="_blank" rel="noopener noreferrer" className="text-green-500 hover:text-green-300 transition-colors">Collab With Us</a></li>
             </ul>
           </div>
 

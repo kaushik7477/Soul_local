@@ -123,6 +123,16 @@ export interface FinanceConfig {
   shippingBaseRate: number; // rate per kg
 }
 
+export interface Expense {
+  id: string;
+  category: 'Marketing' | 'Operations' | 'Salary' | 'Others';
+  description: string;
+  amount: number;
+  date: string; // ISO date string
+  createdAt?: string;
+  updatedAt?: string;
+}
+
 export interface Coupon {
   id?: string;
   _id?: string;

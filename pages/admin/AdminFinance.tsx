@@ -5,18 +5,10 @@ import {
   Package, Truck, IndianRupee, Download, Plus, 
   AlertCircle, CheckCircle2, Clock, Filter, ChevronRight,
   ArrowUpRight, ArrowDownRight, CreditCard, PieChart, Activity,
-  Settings, Lock, Save, X, Eye, EyeOff
+  Settings, Lock, Save, X, Eye, EyeOff, Edit, Trash2
 } from 'lucide-react';
-import { fetchOrders, fetchProducts, socket } from '../../src/api';
-import { Order, FinanceConfig, Product } from '../../types';
-
-interface Expense {
-  id: string;
-  category: 'Marketing' | 'Operations' | 'Salary' | 'Others';
-  description: string;
-  amount: number;
-  date: string;
-}
+import { fetchOrders, fetchProducts, fetchExpenses, createExpense, updateExpense, deleteExpense, socket } from '../../src/api';
+import { Order, FinanceConfig, Product, Expense } from '../../types';
 
 const DEFAULT_CONFIG: FinanceConfig = {
   password: 'admin', // Default password
@@ -34,10 +26,7 @@ const DEFAULT_CONFIG: FinanceConfig = {
 const AdminFinance: React.FC = () => {
   const [orders, setOrders] = useState<Order[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
-  const [expenses, setExpenses] = useState<Expense[]>([
-    { id: '1', category: 'Marketing', description: 'Meta Ads Campaign', amount: 5000, date: new Date().toISOString() },
-    { id: '2', category: 'Operations', description: 'Office Rent', amount: 12000, date: new Date().toISOString() }
-  ]);
+  const [expenses, setExpenses] = useState<Expense[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState<'overview' | 'ledger' | 'invoices'>('overview');
   
@@ -53,6 +42,7 @@ const AdminFinance: React.FC = () => {
   const [showExpenseModal, setShowExpenseModal] = useState(false);
   const [passwordInput, setPasswordInput] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [editingExpense, setEditingExpense] = useState<Expense | null>(null);
   
   // Form States
   const [newExpense, setNewExpense] = useState<Partial<Expense>>({
@@ -75,6 +65,9 @@ const AdminFinance: React.FC = () => {
     socket.on('product_created', handleUpdate);
     socket.on('product_updated', handleUpdate);
     socket.on('product_deleted', handleUpdate);
+    socket.on('expense_created', handleUpdate);
+    socket.on('expense_updated', handleUpdate);
+    socket.on('expense_deleted', handleUpdate);
 
     return () => {
       socket.off('order_created', handleUpdate);
@@ -82,14 +75,21 @@ const AdminFinance: React.FC = () => {
       socket.off('product_created', handleUpdate);
       socket.off('product_updated', handleUpdate);
       socket.off('product_deleted', handleUpdate);
+      socket.off('expense_created', handleUpdate);
+      socket.off('expense_updated', handleUpdate);
+      socket.off('expense_deleted', handleUpdate);
     };
   }, []);
 
   const loadData = async () => {
     try {
-      const [o, p] = await Promise.all([fetchOrders(), fetchProducts()]);
+      const [o, p, e] = await Promise.all([fetchOrders(), fetchProducts(), fetchExpenses()]);
       setOrders(o);
       setProducts(p);
+      setExpenses(e.map((expense) => ({
+        ...expense,
+        date: expense.date ? new Date(expense.date).toISOString() : new Date().toISOString(),
+      })));
     } catch (err) {
       console.error("Finance data load failed:", err);
     } finally {
@@ -103,18 +103,69 @@ const AdminFinance: React.FC = () => {
     setShowConfigModal(false);
   };
 
-  const handleAddExpense = () => {
-    if (newExpense.description && newExpense.amount) {
-      const expense: Expense = {
-        id: Math.random().toString(36).substr(2, 9),
-        category: newExpense.category as any,
-        description: newExpense.description,
-        amount: Number(newExpense.amount),
-        date: newExpense.date || new Date().toISOString()
-      };
-      setExpenses([expense, ...expenses]);
+  const resetExpenseForm = () => {
+    setEditingExpense(null);
+    setNewExpense({ category: 'Operations', description: '', amount: 0, date: new Date().toISOString() });
+  };
+
+  const openExpenseModal = (expense?: Expense) => {
+    if (expense) {
+      setEditingExpense(expense);
+      setNewExpense({
+        category: expense.category,
+        description: expense.description,
+        amount: expense.amount,
+        date: expense.date || new Date().toISOString(),
+      });
+    } else {
+      resetExpenseForm();
+    }
+    setShowExpenseModal(true);
+  };
+
+  const handleSaveExpense = async () => {
+    if (!newExpense.description || !newExpense.amount) return;
+
+    const payload = {
+      category: newExpense.category,
+      description: newExpense.description,
+      amount: Number(newExpense.amount),
+      date: newExpense.date,
+    };
+
+    try {
+      if (editingExpense) {
+        const updated = await updateExpense(editingExpense.id, payload);
+        setExpenses(prev => prev.map(e => (e.id === updated.id ? {
+          ...updated,
+          id: updated.id || updated._id,
+          date: updated.date ? new Date(updated.date).toISOString() : new Date().toISOString(),
+        } : e)));
+      } else {
+        const created = await createExpense(payload);
+        setExpenses(prev => [
+          {
+            ...created,
+            id: created.id || created._id,
+            date: created.date ? new Date(created.date).toISOString() : new Date().toISOString(),
+          },
+          ...prev,
+        ]);
+      }
       setShowExpenseModal(false);
-      setNewExpense({ category: 'Operations', description: '', amount: 0, date: new Date().toISOString() });
+      resetExpenseForm();
+    } catch (err) {
+      console.error('Expense save failed:', err);
+    }
+  };
+
+  const handleDeleteExpense = async (id: string) => {
+    if (!window.confirm('Delete this expense? This action cannot be undone.')) return;
+    try {
+      await deleteExpense(id);
+      setExpenses(prev => prev.filter(e => e.id !== id));
+    } catch (err) {
+      console.error('Failed to delete expense:', err);
     }
   };
 
@@ -222,7 +273,7 @@ const AdminFinance: React.FC = () => {
             <Settings className="w-4 h-4" /> Edit Costs
           </button>
           <button 
-            onClick={() => setShowExpenseModal(true)}
+            onClick={() => openExpenseModal()}
             className="flex items-center gap-2 px-6 py-3 bg-blue-600 text-white rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-blue-500 transition-all shadow-[0_0_20px_rgba(37,99,235,0.3)]"
           >
             <Plus className="w-4 h-4" /> Add Expense
@@ -380,6 +431,7 @@ const AdminFinance: React.FC = () => {
                 <th className="p-8">Category</th>
                 <th className="p-8">Date</th>
                 <th className="p-8 text-right">Amount</th>
+                <th className="p-8 text-right">Actions</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-white/5 font-bold text-xs">
@@ -393,6 +445,22 @@ const AdminFinance: React.FC = () => {
                   </td>
                   <td className="p-8 text-zinc-500">{new Date(exp.date).toLocaleDateString()}</td>
                   <td className="p-8 text-right text-red-500">₹{exp.amount.toLocaleString()}</td>
+                  <td className="p-8 text-right flex justify-end gap-2">
+                    <button
+                      onClick={() => openExpenseModal(exp)}
+                      className="px-3 py-2 bg-white/10 hover:bg-white/20 rounded-xl text-xs font-black uppercase tracking-wider text-blue-300 hover:text-white transition-all"
+                      title="Edit"
+                    >
+                      <Edit className="w-4 h-4" />
+                    </button>
+                    <button
+                      onClick={() => handleDeleteExpense(exp.id)}
+                      className="px-3 py-2 bg-red-500/10 hover:bg-red-500/20 rounded-xl text-xs font-black uppercase tracking-wider text-red-300 hover:text-white transition-all"
+                      title="Delete"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
+                  </td>
                 </tr>
               ))}
               <tr className="bg-blue-500/5 italic">
@@ -635,8 +703,10 @@ const AdminFinance: React.FC = () => {
         <div className="fixed inset-0 bg-black/80 backdrop-blur-md flex items-center justify-center z-[100] p-4">
           <div className="bg-zinc-900 border border-white/10 p-8 rounded-[2.5rem] w-full max-w-md space-y-6">
             <div className="flex justify-between items-center">
-              <h3 className="text-xl font-black uppercase italic">New Expense</h3>
-              <button onClick={() => setShowExpenseModal(false)} className="text-zinc-500 hover:text-white">
+              <h3 className="text-xl font-black uppercase italic">
+                {editingExpense ? 'Edit Expense' : 'New Expense'}
+              </h3>
+              <button onClick={() => { setShowExpenseModal(false); resetExpenseForm(); }} className="text-zinc-500 hover:text-white">
                 <X className="w-5 h-5" />
               </button>
             </div>
@@ -675,13 +745,22 @@ const AdminFinance: React.FC = () => {
                   className="w-full bg-black border border-white/5 rounded-xl p-3 text-[10px] font-black outline-none focus:border-blue-500"
                 />
               </div>
+              <div className="space-y-2">
+                <label className="text-[9px] font-black uppercase text-zinc-500">Date</label>
+                <input
+                  type="date"
+                  value={newExpense.date ? new Date(newExpense.date).toISOString().slice(0, 10) : ''}
+                  onChange={(e) => setNewExpense({ ...newExpense, date: e.target.value ? new Date(e.target.value).toISOString() : '' })}
+                  className="w-full bg-black border border-white/5 rounded-xl p-3 text-[10px] font-black outline-none focus:border-blue-500"
+                />
+              </div>
             </div>
 
             <button 
-              onClick={handleAddExpense}
+              onClick={handleSaveExpense}
               className="w-full py-4 bg-blue-600 rounded-2xl text-[10px] font-black uppercase tracking-widest shadow-[0_0_20px_rgba(37,99,235,0.3)]"
             >
-              Post to Ledger
+              {editingExpense ? 'Save Changes' : 'Post to Ledger'}
             </button>
           </div>
         </div>

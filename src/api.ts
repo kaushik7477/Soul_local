@@ -152,6 +152,32 @@ export const deleteCoupon = async (id: string) => {
   return data;
 };
 
+// --- Expenses (Operational Ledger) ---
+export const fetchExpenses = async () => {
+  try {
+    const { data } = await api.get('/expenses');
+    return (data || []).map((e: any) => ({ ...e, id: e.id || e._id }));
+  } catch (error) {
+    console.error('Error fetching expenses:', error);
+    return [];
+  }
+};
+
+export const createExpense = async (expenseData: any) => {
+  const { data } = await api.post('/expenses', expenseData);
+  return data;
+};
+
+export const updateExpense = async (id: string, expenseData: any) => {
+  const { data } = await api.put(`/expenses/${id}`, expenseData);
+  return data;
+};
+
+export const deleteExpense = async (id: string) => {
+  const { data } = await api.delete(`/expenses/${id}`);
+  return data;
+};
+
 // --- GIFTS ---
 export const fetchFreeGifts = async () => {
   try {
