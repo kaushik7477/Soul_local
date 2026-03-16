@@ -95,6 +95,15 @@ app.use((req, res, next) => {
 // Routes
 app.use('/api', apiRoutes);
 
+// Health check route
+app.get('/health', (req, res) => {
+  res.status(200).json({ 
+    status: 'OK', 
+    timestamp: new Date().toISOString(),
+    uptime: process.uptime()
+  });
+});
+
 const distPath = path.join(__dirname, '..', 'dist');
 console.log(distPath);
 

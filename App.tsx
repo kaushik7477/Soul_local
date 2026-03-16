@@ -1,6 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { HashRouter, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import NotFoundPage from './pages/NotFoundPage';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import HomePage from './pages/HomePage';
@@ -266,7 +267,7 @@ const App: React.FC = () => {
               <Route path="settings" element={<AdminSettings />} />
             </Route>
 
-            <Route path="*" element={<Navigate to="/" />} />
+            <Route path="*" element={<NotFoundPage />} />
           </Routes>
         </main>
 

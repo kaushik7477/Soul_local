@@ -83,7 +83,11 @@ const AdminFinance: React.FC = () => {
 
   const loadData = async () => {
     try {
-      const [o, p, e] = await Promise.all([fetchOrders(), fetchProducts(), fetchExpenses()]);
+      const [o, p, e] = (await Promise.all([
+        fetchOrders(),
+        fetchProducts(),
+        fetchExpenses(),
+      ])) as [Order[], Product[], Expense[]];
       setOrders(o);
       setProducts(p);
       setExpenses(e.map((expense) => ({
