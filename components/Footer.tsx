@@ -80,7 +80,7 @@ const Footer: React.FC = () => {
 
         <div className="mt-4">
           <a
-            href="https://mitelogix.com"
+            href="https://mitelogix.in"
             target="_blank"
             rel="noopener noreferrer"
             className="block w-full text-zinc-400 px-2 py-1 flex flex-row items-center justify-center gap-2 text-xs font-semibold tracking-wide"
@@ -98,7 +98,7 @@ const Footer: React.FC = () => {
               <img
                 src="/assets/mytelogix.png"
                 alt="Mitelogix"
-                className="h-26 object-contain"
+                className="h-12 object-contain"
               />
             </div>
           </a>
