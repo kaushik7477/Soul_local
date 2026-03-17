@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Search, User, ShoppingCart, Heart, Menu, X } from 'lucide-react';
 import { Product, User as UserType } from '../types';
+import { getThumbnailUrl } from '../src/utils/cloudinary';
 
 interface HeaderProps {
   user: UserType | null;
@@ -150,7 +151,7 @@ const Header: React.FC<HeaderProps> = ({ user, cartCount, wishlistCount, product
                       onClick={() => handleSuggestionClick(suggestion.id)}
                       className="w-full flex items-center gap-4 p-4 hover:bg-white/10 transition-colors text-left"
                     >
-                      <img src={suggestion.images[0]} alt="" className="w-12 h-12 object-cover rounded-md" />
+                      <img src={getThumbnailUrl(suggestion.images[0])} alt="" className="w-12 h-12 object-cover rounded-md" loading="lazy" />
                       <div className="flex flex-col">
                         <span className="text-sm font-bold uppercase tracking-tight text-white">{suggestion.name}</span>
                         <span className="text-[10px] text-zinc-400 font-bold tracking-widest uppercase">{suggestion.sku}</span>

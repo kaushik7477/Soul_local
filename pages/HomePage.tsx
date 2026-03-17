@@ -8,6 +8,7 @@ import TextRotatorSection from '../components/TextRotatorSection';
 import { Product, User as UserType } from '../types';
 import { fetchHeroImages, fetchCategories, fetchReviews, fetchTags, fetchWebsiteConfig, uploadImage, createReview } from '../src/api';
 import { DUMMY_HERO_IMAGES, DUMMY_CATEGORIES_DATA, DUMMY_TAGS, DUMMY_REVIEWS } from '../constants';
+import { getOptimizedUrl, getThumbnailUrl } from '../src/utils/cloudinary';
 
 interface HomePageProps {
   products: Product[];
@@ -218,8 +219,9 @@ const HomePage: React.FC<HomePageProps> = ({ products, addToCart, toggleWishlist
             return (
               <Link key={i} to={linkedProduct ? `/product/${linkedProduct.id}` : '#'} className="min-w-full md:min-w-[33.33%] h-full relative block">
                 <img 
-                  src={img.imageUrl} 
+                  src={getOptimizedUrl(img.imageUrl)} 
                   alt="Hero" 
+                  loading="eager"
                   className="w-full h-full object-cover object-top" 
                   onError={(e) => { e.currentTarget.src = 'data:image/svg+xml;charset=UTF-8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%221200%22%20height%3D%22600%22%20viewBox%3D%220%200%201200%20600%22%3E%3Crect%20fill%3D%22%23333%22%20width%3D%221200%22%20height%3D%22600%22%2F%3E%3Ctext%20fill%3D%22%23666%22%20font-family%3D%22sans-serif%22%20font-size%3D%2260%22%20dy%3D%2220%22%20font-weight%3D%22bold%22%20x%3D%2250%25%22%20y%3D%2250%25%22%20text-anchor%3D%22middle%22%3EHero%20Image%3C%2Ftext%3E%3C%2Fsvg%3E'; }}
                 />
@@ -301,7 +303,7 @@ const HomePage: React.FC<HomePageProps> = ({ products, addToCart, toggleWishlist
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
             {collections.map(col => (
               <Link key={col.tag} to={`/products?tag=${col.tag}`} className="group relative overflow-hidden aspect-square border border-white/5">
-                <img src={col.imageUrl} alt={col.tag} className="w-full h-full object-cover opacity-50 group-hover:opacity-100 group-hover:scale-110 transition-all duration-700" />
+                <img src={getOptimizedUrl(col.imageUrl)} alt={col.tag} loading="lazy" className="w-full h-full object-cover opacity-50 group-hover:opacity-100 group-hover:scale-110 transition-all duration-700" />
                 <div className="absolute inset-0 flex items-center justify-center bg-black/40 group-hover:bg-transparent transition-all">
                   <h3 className="text-xl font-bold uppercase tracking-tighter border-b-2 border-green-500 pb-1">{col.tag}</h3>
                 </div>
@@ -334,7 +336,7 @@ const HomePage: React.FC<HomePageProps> = ({ products, addToCart, toggleWishlist
             return (
               <Link key={gender} to={`/products?gender=${gender}`} className="flex flex-col items-center space-y-4 group">
                 <div className="w-36 h-36 md:w-40 md:h-40 rounded-full overflow-hidden border-2 border-white/10 group-hover:border-green-500 transition-all">
-                  <img src={imageUrl} className="w-full h-full object-cover" alt={gender} />
+                  <img src={getOptimizedUrl(imageUrl)} className="w-full h-full object-cover" alt={gender} loading="lazy" />
                 </div>
                 <span className="text-sm font-bold uppercase tracking-widest group-hover:text-green-500 transition-colors">{gender}</span>
               </Link>
@@ -444,7 +446,7 @@ const HomePage: React.FC<HomePageProps> = ({ products, addToCart, toggleWishlist
                       onClick={() => setSelectedReview(r)}
                       className="w-60 h-80 bg-zinc-900 border border-white/5 rounded-xl overflow-hidden flex-shrink-0 relative group cursor-pointer"
                     >
-                      <img src={r.imageUrl} className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" alt="Review" />
+                      <img src={getOptimizedUrl(r.imageUrl)} className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" alt="Review" loading="lazy" />
                       
                       {/* Star Rating Overlay */}
                       {r.rating && (
@@ -488,7 +490,7 @@ const HomePage: React.FC<HomePageProps> = ({ products, addToCart, toggleWishlist
                       onClick={() => setSelectedReview(r)}
                       className="w-60 h-80 bg-zinc-900 border border-white/5 rounded-xl overflow-hidden flex-shrink-0 relative group cursor-pointer"
                     >
-                      <img src={r.imageUrl} className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" alt="Review" />
+                      <img src={getOptimizedUrl(r.imageUrl)} className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" alt="Review" loading="lazy" />
                       
                       {/* Star Rating Overlay */}
                       {r.rating && (
@@ -537,7 +539,7 @@ const HomePage: React.FC<HomePageProps> = ({ products, addToCart, toggleWishlist
                       onClick={() => setSelectedReview(r)}
                       className="w-60 h-80 bg-zinc-900 border border-white/5 rounded-xl overflow-hidden flex-shrink-0 relative group cursor-pointer"
                     >
-                      <img src={r.imageUrl} className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" alt="Review" />
+                      <img src={getOptimizedUrl(r.imageUrl)} className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" alt="Review" loading="lazy" />
                       
                       {/* Star Rating Overlay */}
                       {r.rating && (
@@ -581,7 +583,7 @@ const HomePage: React.FC<HomePageProps> = ({ products, addToCart, toggleWishlist
                       onClick={() => setSelectedReview(r)}
                       className="w-60 h-80 bg-zinc-900 border border-white/5 rounded-xl overflow-hidden flex-shrink-0 relative group cursor-pointer"
                     >
-                      <img src={r.imageUrl} className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" alt="Review" />
+                      <img src={getOptimizedUrl(r.imageUrl)} className="w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity" alt="Review" loading="lazy" />
                       
                       {/* Star Rating Overlay */}
                       {r.rating && (
@@ -797,7 +799,7 @@ const HomePage: React.FC<HomePageProps> = ({ products, addToCart, toggleWishlist
                     </button>
 
                     <div className="w-full md:w-1/2 aspect-square md:aspect-auto relative min-h-[300px]">
-                        <img src={selectedReview.imageUrl} className="w-full h-full object-cover" alt="Review" />
+                        <img src={getOptimizedUrl(selectedReview.imageUrl)} className="w-full h-full object-cover" alt="Review" loading="eager" />
                         
                         {/* Star Rating Overlay in Popup */}
                         <div className="absolute top-2 right-2 bg-black/80 px-2 py-1 rounded-md flex items-center shadow-2xl border border-white/10">

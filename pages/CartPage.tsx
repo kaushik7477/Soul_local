@@ -4,6 +4,7 @@ import { ShoppingBag, Trash2, MapPin, Ticket, ShieldCheck, ChevronRight, Chevron
 import { Product, User, Coupon, FreeGift, Address } from '../types';
 import { fetchCoupons, fetchFreeGifts, updateUser, createRazorpayOrder, verifyRazorpayPayment } from '../src/api';
 import { INDIAN_STATES } from '../constants';
+import { getThumbnailUrl } from '../src/utils/cloudinary';
 
 interface CartPageProps {
   cart: { productId: string; quantity: number; size: string; isGift?: boolean }[];
@@ -625,7 +626,7 @@ const CartPage: React.FC<CartPageProps> = ({ cart, addToCart, updateCartItem, up
                             <div key={gift.id || gift._id} className={`snap-start min-w-[280px] border p-4 rounded-xl flex flex-col gap-3 ${isUnlocked ? 'bg-green-500/5 border-green-500/20' : 'bg-zinc-900 border-white/5'}`}>
                                 <div className="flex items-start gap-4">
                                     <div className="w-16 h-20 bg-zinc-800 flex-shrink-0 overflow-hidden rounded-md border border-white/10">
-                                        <img src={product.images[0]} alt={gift.name} className="w-full h-full object-cover" />
+                                        <img src={getThumbnailUrl(product.images[0])} alt={gift.name} loading="lazy" className="w-full h-full object-cover" />
                                     </div>
                                     <div className="flex-grow min-w-0">
                                         <h4 className={`font-black uppercase tracking-wider text-xs truncate ${isUnlocked ? 'text-green-500' : 'text-zinc-500'}`}>
@@ -698,7 +699,7 @@ const CartPage: React.FC<CartPageProps> = ({ cart, addToCart, updateCartItem, up
                             </div>
                         )}
                         <div className="w-24 h-32 flex-shrink-0 overflow-hidden bg-zinc-800">
-                          <img src={item.product.images[0]} alt={item.product.name} className={`w-full h-full object-cover ${isInvalidGift ? 'grayscale opacity-75' : ''}`} />
+                          <img src={getThumbnailUrl(item.product.images[0])} alt={item.product.name} loading="lazy" className={`w-full h-full object-cover ${isInvalidGift ? 'grayscale opacity-75' : ''}`} />
                         </div>
                         <div className="flex-grow flex flex-col justify-between">
                           <div>

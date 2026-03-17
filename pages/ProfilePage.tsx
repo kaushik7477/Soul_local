@@ -9,6 +9,7 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { User, Order, Address, Product } from '../types';
 import { fetchOrders, fetchProducts, updateUser, logoutUser, mapOrder } from '../src/api';
 import { INDIAN_STATES } from '../constants';
+import { getThumbnailUrl } from '../src/utils/cloudinary';
 
 interface ProfilePageProps {
   user: User;
@@ -436,9 +437,10 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ user, setUser, wishlistCount 
                         <div className="w-20 h-24 bg-zinc-800 rounded-xl overflow-hidden flex-shrink-0 border border-zinc-700">
                           {/* Get first product image */}
                           <img 
-                            src={getProductDetails(activeOrders[activeOrderIndex].products[0].productId)?.images[0]} 
+                            src={getThumbnailUrl(getProductDetails(activeOrders[activeOrderIndex].products[0].productId)?.images[0])} 
                             className="w-full h-full object-cover" 
                             alt="" 
+                            loading="lazy"
                           />
                         </div>
                         <div className="flex-grow">
@@ -510,9 +512,10 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ user, setUser, wishlistCount 
                        <div className="flex items-center space-x-6 w-full">
                         <div className="w-16 h-20 bg-zinc-800 rounded-lg overflow-hidden flex-shrink-0 grayscale">
                           <img 
-                            src={getProductDetails(lastOrder.products[0].productId)?.images[0]} 
+                            src={getThumbnailUrl(getProductDetails(lastOrder.products[0].productId)?.images[0])} 
                             className="w-full h-full object-cover" 
                             alt="" 
+                            loading="lazy"
                           />
                         </div>
                         <div>
@@ -563,9 +566,10 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ user, setUser, wishlistCount 
                             <div className="flex gap-4">
                               <div className="w-16 h-16 bg-zinc-800 rounded-lg overflow-hidden flex-shrink-0">
                                 <img 
-                                  src={getProductDetails(order.products[0].productId)?.images[0]} 
+                                  src={getThumbnailUrl(getProductDetails(order.products[0].productId)?.images[0])} 
                                   className="w-full h-full object-cover" 
                                   alt="" 
+                                  loading="lazy"
                                 />
                               </div>
                               <div>
