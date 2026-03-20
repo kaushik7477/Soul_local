@@ -37,9 +37,9 @@ const AdminLayout: React.FC<AdminLayoutProps> = ({ isAdmin, setIsAdmin }) => {
   const [currentAdminEmail, setCurrentAdminEmail] = useState<string | null>(null);
   const [accessMap, setAccessMap] = useState<Record<string, boolean> | null>(null);
   
-    useEffect(() => {
-      alert(`MongooseError: Operation products.findOne() buffering timed out after 10000ms\n    at Timeout.<anonymous> (https:\\thesoulstich.com\\Project\\node_modules\\mongoose\\lib\\drivers\\node-mongodb-native\\collection.js:185:23)\n    at listOnTimeout (node:internal/timers:559:17)\n    at processTimers (node:internal/timers:502:7)`);
-    }, []);
+    // useEffect(() => {
+    //   alert(`MongooseError: Operation products.findOne() buffering timed out after 10000ms\n    at Timeout.<anonymous> (https:\\thesoulstich.com\\Project\\node_modules\\mongoose\\lib\\drivers\\node-mongodb-native\\collection.js:185:23)\n    at listOnTimeout (node:internal/timers:559:17)\n    at processTimers (node:internal/timers:502:7)`);
+    // }, []);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
