@@ -710,6 +710,20 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ user, setUser, wishlistCount 
                       ))}
                     </div>
                   )}
+
+                  {/* Mobile Log Out Section */}
+                  <div className="lg:hidden mt-6 pt-4 border-t border-zinc-800/50">
+                    <button 
+                      onClick={() => {
+                        console.log("LOG-OUT clicked");
+                        setShowLogoutModal(true);
+                      }}
+                      className="w-full flex items-center justify-center space-x-3 p-4 bg-zinc-900/30 border border-zinc-800 rounded-3xl hover:bg-red-500/10 text-red-500 transition-all border-transparent hover:border-red-500/20 group"
+                    >
+                      <LogOut className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                      <span className="text-xs font-black uppercase tracking-[0.2em]">LOG-OUT</span>
+                    </button>
+                  </div>
                 </div>
               )}
 
@@ -778,6 +792,20 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ user, setUser, wishlistCount 
                         </div>
                       );
                     })}
+                  </div>
+
+                  {/* Mobile Log Out Section */}
+                  <div className="lg:hidden mt-6 pt-4 border-t border-zinc-800/50">
+                    <button 
+                      onClick={() => {
+                        console.log("LOG-OUT clicked");
+                        setShowLogoutModal(true);
+                      }}
+                      className="w-full flex items-center justify-center space-x-3 p-4 bg-zinc-900/30 border border-zinc-800 rounded-3xl hover:bg-red-500/10 text-red-500 transition-all border-transparent hover:border-red-500/20 group"
+                    >
+                      <LogOut className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                      <span className="text-xs font-black uppercase tracking-[0.2em]">LOG-OUT</span>
+                    </button>
                   </div>
                 </div>
               )}
@@ -892,6 +920,20 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ user, setUser, wishlistCount 
                            </div>
                         </div>
                      </div>
+                  </div>
+
+                  {/* Mobile Log Out Section */}
+                  <div className="lg:hidden mt-6 pt-4 border-t border-zinc-800/50">
+                    <button 
+                      onClick={() => {
+                        console.log("LOG-OUT clicked");
+                        setShowLogoutModal(true);
+                      }}
+                      className="w-full flex items-center justify-center space-x-3 p-4 bg-zinc-900/30 border border-zinc-800 rounded-3xl hover:bg-red-500/10 text-red-500 transition-all border-transparent hover:border-red-500/20 group"
+                    >
+                      <LogOut className="w-5 h-5 group-hover:scale-110 transition-transform" />
+                      <span className="text-xs font-black uppercase tracking-[0.2em]">LOG-OUT</span>
+                    </button>
                   </div>
                 </div>
               )}
