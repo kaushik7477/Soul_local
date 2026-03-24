@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react';
+import React, { useState, useEffect, useMemo, useRef } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { 
   User as UserIcon, Package, MapPin, LogOut, ChevronRight, Settings, 
@@ -100,6 +100,22 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ user, setUser, wishlistCount 
 
   const [deleteAccountStep, setDeleteAccountStep] = useState<'initial' | 'otp'>('initial');
   const [deleteOtp, setDeleteOtp] = useState('');
+
+  const activeTransmissionsRef = useRef<HTMLDivElement>(null);
+  const addressesRef = useRef<HTMLDivElement>(null);
+  const settingsRef = useRef<HTMLDivElement>(null);
+
+  const scrollToSection = (section: 'orders' | 'addresses' | 'settings') => {
+    setActiveSection(section);
+    setTimeout(() => {
+      const target = section === 'orders'
+        ? activeTransmissionsRef.current
+        : section === 'addresses'
+          ? addressesRef.current
+          : settingsRef.current;
+      target?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }, 120);
+  };
 
   // Handlers
   const handleLogout = async (allDevices: boolean) => {
@@ -290,9 +306,40 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ user, setUser, wishlistCount 
     <div className="bg-black min-h-screen text-white pt-10 pb-20 font-sans">
       <div className="container mx-auto px-4 max-w-6xl">
         <div className="flex flex-col lg:flex-row gap-12">
-          
+
+          {/* Mobile top summary */}
+          <div className="lg:hidden w-full mb-6 text-center">
+            <h2 className="text-2xl font-black uppercase tracking-tight text-white">{user.name || 'New User'}</h2>
+            <div className="mt-4 grid grid-cols-4 gap-2">
+              {[
+                {key:'orders', label:'Orders', icon: Package},
+                {key:'wishlist', label:'Wishlist', icon: Heart},
+                {key:'addresses', label:'Address', icon: MapPin},
+                {key:'settings', label:'Settings', icon: Settings},
+              ].map(item => {
+                const IconComp = item.icon;
+                return (
+                  <button
+                    key={item.key}
+                    onClick={() => {
+                      if (item.key === 'wishlist') {
+                        navigate('/wishlist');
+                        return;
+                      }
+                      scrollToSection(item.key as 'orders'|'addresses'|'settings');
+                    }}
+                    className="flex flex-col items-center justify-center p-2 rounded-lg bg-zinc-900/70 border border-zinc-700 text-zinc-300 hover:text-white hover:border-green-500 transition-colors"
+                  >
+                    <IconComp className="w-5 h-5 mb-1" />
+                    <span className="text-[9px] uppercase tracking-widest">{item.label}</span>
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+
           {/* Sidebar */}
-          <div className="w-full lg:w-72 space-y-6">
+          <div className="hidden lg:block w-full lg:w-72 space-y-6">
             <div className="p-8 bg-zinc-900/50 border border-zinc-800 rounded-3xl flex flex-col items-center backdrop-blur-sm relative overflow-hidden group">
               <div className="absolute inset-0 bg-gradient-to-br from-green-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
               <div className="w-24 h-24 bg-zinc-800 rounded-full flex items-center justify-center mb-6 border-2 border-zinc-700 relative z-10">
@@ -416,7 +463,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ user, setUser, wishlistCount 
           <div className="flex-grow space-y-10">
             
             {/* Active Transmissions Header */}
-            <div>
+            <div ref={activeTransmissionsRef}>
               <h1 className="text-3xl font-black uppercase tracking-tighter mb-8 flex items-center gap-4">
                 Active Transmissions
                 <span className="w-2 h-2 bg-green-500 rounded-full animate-pulse shadow-[0_0_10px_rgba(34,197,94,0.8)]"></span>
@@ -547,6 +594,41 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ user, setUser, wishlistCount 
               </div>
             </div>
 
+            {/* Mobile widgets under Active Transmissions */}
+            <div className="lg:hidden space-y-4 mb-6">
+              <div className="bg-zinc-900/30 border border-zinc-800 p-4 rounded-3xl">
+                <h3 className="text-[10px] font-black uppercase tracking-widest text-zinc-500 mb-3">Contact Relay</h3>
+                <div className="space-y-2">
+                  {user.email && (
+                    <div className="flex items-center gap-2">
+                      <Mail className="w-4 h-4 text-zinc-500" />
+                      <p className="text-xs font-bold text-zinc-300">{user.email}</p>
+                    </div>
+                  )}
+                  <div className="flex items-center gap-2">
+                    <Smartphone className="w-4 h-4 text-zinc-500" />
+                    <p className="text-xs font-bold text-zinc-300">+91 {user.phone}</p>
+                  </div>
+                </div>
+              </div>
+              <div className="bg-zinc-900/30 border border-zinc-800 p-4 rounded-3xl">
+                <div className="flex justify-between items-center mb-3">
+                  <h3 className="text-[10px] font-black uppercase tracking-widest text-zinc-500">Saved Locations</h3>
+                </div>
+                {sortedAddresses.length > 0 ? (
+                  <div className="bg-black/40 p-3 rounded-xl border border-zinc-800/50">
+                    <p className="text-xs font-bold uppercase tracking-widest text-zinc-300">{sortedAddresses[savedLocationIndex].receiverName}</p>
+                    <p className="text-[10px] text-zinc-500 mt-1 leading-relaxed">
+                      {sortedAddresses[savedLocationIndex].apartment}, {sortedAddresses[savedLocationIndex].roadName}<br />
+                      {sortedAddresses[savedLocationIndex].pincode}
+                    </p>
+                  </div>
+                ) : (
+                  <p className="text-xs text-zinc-500 italic">No saved locations yet.</p>
+                )}
+              </div>
+            </div>
+
             {/* Dynamic Content Sections */}
             <div className="bg-zinc-900/20 border border-white/5 rounded-3xl p-8 min-h-[500px]">
               {activeSection === 'orders' && (
@@ -632,7 +714,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ user, setUser, wishlistCount 
               )}
 
               {activeSection === 'addresses' && (
-                <div>
+                <div ref={addressesRef}>
                   <div className="flex justify-between items-center mb-6">
                     <h2 className="text-xl font-black uppercase tracking-tighter">Addresses</h2>
                     <button 
@@ -701,7 +783,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ user, setUser, wishlistCount 
               )}
 
               {activeSection === 'settings' && (
-                <div>
+                <div ref={settingsRef}>
                   <h2 className="text-xl font-black uppercase tracking-tighter mb-8">Settings</h2>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                      {/* Profile Settings */}

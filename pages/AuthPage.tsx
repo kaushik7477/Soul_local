@@ -27,6 +27,7 @@ const AuthPage: React.FC<AuthPageProps> = ({ setUser }) => {
   };
 
   const handleOtpChange = (index: number, value: string) => {
+    value = value.replace(/\D/g, '');
     if (value.length > 1) value = value.slice(-1);
     const newOtp = [...otp];
     newOtp[index] = value;
@@ -169,11 +170,13 @@ const AuthPage: React.FC<AuthPageProps> = ({ setUser }) => {
                   <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-zinc-500" />
                   <input 
                     type="tel" 
+                    inputMode="tel"
+                    pattern="[0-9]*"
                     name="phone"
                     value={phone}
                     onChange={handlePhoneChange}
                     placeholder="Phone Number" 
-                    className="w-full bg-black border border-white/10 px-12 py-4 rounded-xl focus:border-green-500 focus:outline-none transition-all text-sm" 
+                    className="w-full bg-black border-2 border-[#22c55e] px-12 py-4 rounded-xl focus:border-[#22c55e] focus:outline-none transition-all text-sm text-white placeholder:text-zinc-500" 
                   />
                 </div>
               </div>
@@ -185,11 +188,13 @@ const AuthPage: React.FC<AuthPageProps> = ({ setUser }) => {
                     <input 
                       key={i}
                       id={`otp-${i}`}
-                      type="text" 
+                      type="tel" 
+                      inputMode="numeric" 
+                      pattern="[0-9]*" 
                       maxLength={1} 
                       value={digit}
                       onChange={(e) => handleOtpChange(i, e.target.value)}
-                      className="w-12 h-14 bg-black border border-white/10 text-center text-xl font-bold focus:border-green-500 focus:outline-none rounded-lg text-white" 
+                      className="w-12 h-14 bg-black border-2 border-[#22c55e] text-center text-xl font-bold focus:border-[#22c55e] focus:outline-none rounded-lg text-white" 
                     />
                   ))}
                 </div>
