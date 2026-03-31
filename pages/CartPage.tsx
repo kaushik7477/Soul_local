@@ -50,10 +50,10 @@ const CustomDropdown = ({
     <div className="relative" ref={dropdownRef}>
       <button 
         onClick={() => setIsOpen(!isOpen)}
-        className="flex items-center justify-between bg-zinc-900 border border-white/10 px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-[0.1em] text-white hover:border-green-500/50 hover:bg-zinc-800 transition-all min-w-[100px] shadow-lg group"
+        className="flex items-center justify-between bg-zinc-900 border border-white/10 px-4 py-2 rounded-xl text-[10px] font-black uppercase tracking-[0.1em] text-white hover:border-[#22c55e]/50 hover:bg-zinc-800 transition-all min-w-[100px] shadow-lg group"
       >
-        <span className="group-hover:text-green-500 transition-colors">{selectedOption ? selectedOption.label : value}</span>
-        <ChevronDown className={`w-3.5 h-3.5 ml-2 text-zinc-500 group-hover:text-green-500 transition-all ${isOpen ? 'rotate-180' : ''}`} />
+        <span className="group-hover:text-[#22c55e] transition-colors">{selectedOption ? selectedOption.label : value}</span>
+        <ChevronDown className={`w-3.5 h-3.5 ml-2 text-zinc-500 group-hover:text-[#22c55e] transition-all ${isOpen ? 'rotate-180' : ''}`} />
       </button>
 
       {isOpen && (
@@ -75,7 +75,7 @@ const CustomDropdown = ({
                     setIsOpen(false);
                   }}
                   className={`w-full text-left px-3 py-2 text-[10px] font-bold uppercase tracking-widest transition-all relative flex items-center justify-between
-                    ${opt.value === value ? 'bg-white/5 text-green-500' : 'hover:bg-white/5 text-white/80 hover:text-white'}
+                    ${opt.value === value ? 'bg-white/5 text-[#22c55e]' : 'hover:bg-white/5 text-white/80 hover:text-white'}
                     ${opt.disabled ? 'opacity-30 cursor-not-allowed' : 'cursor-pointer'}
                   `}
                 >
@@ -83,11 +83,11 @@ const CustomDropdown = ({
                     {isQty && !isAvailable && (
                       <span className="text-[7px] text-red-500 font-black whitespace-nowrap opacity-80">OUT OF STOCK</span>
                     )}
-                    <span className={`${isQty ? (isAvailable ? 'text-green-500' : 'text-white/40') : ''}`}>
+                    <span className={`${isQty ? (isAvailable ? 'text-[#22c55e]' : 'text-white/40') : ''}`}>
                       {opt.label}
                     </span>
                   </div>
-                  {opt.value === value && <div className="w-1 h-1 rounded-full bg-green-500 shadow-[0_0_8px_rgba(34,197,94,0.5)]" />}
+                  {opt.value === value && <div className="w-1 h-1 rounded-full bg-[#22c55e] shadow-[0_0_8px_rgba(34,197,94,0.5)]" />}
                 </button>
               );
             })}
@@ -113,7 +113,17 @@ const CartPage: React.FC<CartPageProps> = ({ cart, addToCart, updateCartItem, up
   const [isAddingAddress, setIsAddingAddress] = useState(false);
   const [newAddress, setNewAddress] = useState<Partial<Address>>({});
   const [isCheckingOut, setIsCheckingOut] = useState(false);
+  const [currentStep, setCurrentStep] = useState(1);
+  const [windowWidth, setWindowWidth] = useState(window.innerWidth);
   const scrollRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  const isMobile = windowWidth < 1024;
 
   const scroll = (direction: 'left' | 'right') => {
     if (scrollRef.current) {
@@ -424,24 +434,37 @@ const CartPage: React.FC<CartPageProps> = ({ cart, addToCart, updateCartItem, up
 
   // Early return removed to show full layout
 
+  const CheckoutProgressBar = ({ step }: { step: number }) => (
+    <div className="flex items-center space-x-2">
+      {[1, 2, 3].map((i) => (
+        <div 
+          key={i} 
+          className={`h-1.5 w-10 rounded-full transition-all duration-500 ${i === step ? 'bg-[#22c55e]' : 'bg-zinc-800'}`}
+        />
+      ))}
+    </div>
+  );
 
   return (
     <div className="bg-black min-h-screen text-white pt-10 pb-20">
       <div className="container mx-auto px-4">
-        <h1 className="text-3xl font-black uppercase tracking-tighter mb-12 flex items-center space-x-4">
-          <span>Shopping Bag</span>
-          <span className="text-sm text-zinc-500 font-bold bg-zinc-900 px-3 py-1 rounded-full">{cartItems.length}</span>
-        </h1>
+        
+        {/* DESKTOP VIEW: Only for screens larger than 1024px */}
+        <div className="hidden lg:block">
+          <h1 className="text-3xl font-black uppercase tracking-tighter mb-12 flex items-center space-x-4">
+            <span>Shopping Bag</span>
+            <span className="text-sm text-zinc-500 font-bold bg-zinc-900 px-3 py-1 rounded-full">{cartItems.length}</span>
+          </h1>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
-          {/* Left: Cart Items & Address */}
-          <div className="lg:col-span-8 space-y-12">
+          <div className="grid grid-cols-12 gap-12">
+            {/* Left: Cart Items & Address */}
+            <div className="col-span-8 space-y-12">
             
             {/* Address Selection */}
             <div className="bg-zinc-900/50 border border-white/5 p-8 rounded-3xl relative">
               <div className="flex justify-between items-center mb-6">
                 <div className="flex items-center space-x-3">
-                  <MapPin className="w-5 h-5 text-green-500" />
+                  <MapPin className="w-5 h-5 text-[#22c55e]" />
                   <h3 className="text-sm font-black uppercase tracking-widest">Delivery Address</h3>
                 </div>
               </div>
@@ -451,7 +474,7 @@ const CartPage: React.FC<CartPageProps> = ({ cart, addToCart, updateCartItem, up
                    <p className="text-zinc-400 text-sm">Login to manage your delivery addresses and checkout.</p>
                    <button 
                     onClick={() => navigate('/auth')}
-                    className="flex items-center justify-center space-x-2 bg-white text-black px-8 py-3 text-xs font-black uppercase tracking-widest hover:bg-green-500 transition-all mx-auto"
+                    className="flex items-center justify-center space-x-2 bg-white text-black px-8 py-3 text-xs font-black uppercase tracking-widest hover:bg-[#22c55e] transition-all mx-auto"
                    >
                      <LogIn className="w-4 h-4" />
                      <span>Login to Checkout</span>
@@ -468,37 +491,37 @@ const CartPage: React.FC<CartPageProps> = ({ cart, addToCart, updateCartItem, up
                         placeholder="Receiver Name" 
                         value={newAddress.receiverName || ''}
                         onChange={e => setNewAddress({...newAddress, receiverName: e.target.value})}
-                        className="bg-black border border-white/10 p-3 rounded-lg text-sm text-white placeholder-zinc-600 focus:border-green-500 outline-none transition-colors"
+                        className="bg-black border border-white/10 p-3 rounded-lg text-sm text-white placeholder-zinc-600 focus:border-[#22c55e] outline-none transition-colors"
                      />
                      {/* Phone number is derived from user OTP verified login. Removed from address input. */}
                      <input 
                         placeholder="Apartment / Building" 
                         value={newAddress.apartment || ''}
                         onChange={e => setNewAddress({...newAddress, apartment: e.target.value})}
-                        className="bg-black border border-white/10 p-3 rounded-lg text-sm text-white placeholder-zinc-600 focus:border-green-500 outline-none transition-colors"
+                        className="bg-black border border-white/10 p-3 rounded-lg text-sm text-white placeholder-zinc-600 focus:border-[#22c55e] outline-none transition-colors"
                      />
                      <input 
                           placeholder="Road Name / Area / Colony" 
                           value={newAddress.roadName || ''}
                           onChange={e => setNewAddress({...newAddress, roadName: e.target.value})}
-                          className="w-full bg-black border border-white/10 p-3 rounded-lg text-sm text-white placeholder-zinc-600 focus:border-green-500 outline-none transition-colors"
+                          className="w-full bg-black border border-white/10 p-3 rounded-lg text-sm text-white placeholder-zinc-600 focus:border-[#22c55e] outline-none transition-colors"
                        />
                      <input 
                         placeholder="Pincode" 
                         value={newAddress.pincode || ''}
                         onChange={e => setNewAddress({...newAddress, pincode: e.target.value})}
-                        className="bg-black border border-white/10 p-3 rounded-lg text-sm text-white placeholder-zinc-600 focus:border-green-500 outline-none transition-colors"
+                        className="bg-black border border-white/10 p-3 rounded-lg text-sm text-white placeholder-zinc-600 focus:border-[#22c55e] outline-none transition-colors"
                      />
                      <input 
                         placeholder="City" 
                         value={newAddress.city || ''}
                         onChange={e => setNewAddress({...newAddress, city: e.target.value})}
-                        className="bg-black border border-white/10 p-3 rounded-lg text-sm text-white placeholder-zinc-600 focus:border-green-500 outline-none transition-colors"
+                        className="bg-black border border-white/10 p-3 rounded-lg text-sm text-white placeholder-zinc-600 focus:border-[#22c55e] outline-none transition-colors"
                      />
                      <select 
                         value={newAddress.state || ''}
                         onChange={e => setNewAddress({...newAddress, state: e.target.value})}
-                        className="bg-black border border-white/10 p-3 rounded-lg text-sm text-white focus:border-green-500 outline-none transition-colors appearance-none cursor-pointer"
+                        className="bg-black border border-white/10 p-3 rounded-lg text-sm text-white focus:border-[#22c55e] outline-none transition-colors appearance-none cursor-pointer"
                      >
                         <option value="" disabled>Select State</option>
                         {INDIAN_STATES.map(state => (
@@ -510,13 +533,13 @@ const CartPage: React.FC<CartPageProps> = ({ cart, addToCart, updateCartItem, up
                           placeholder="Road Name / Area / Colony" 
                           value={newAddress.roadName || ''}
                           onChange={e => setNewAddress({...newAddress, roadName: e.target.value})}
-                          className="w-full bg-black border border-white/10 p-3 rounded-lg text-sm text-white placeholder-zinc-600 focus:border-green-500 outline-none transition-colors"
+                          className="w-full bg-black border border-white/10 p-3 rounded-lg text-sm text-white placeholder-zinc-600 focus:border-[#22c55e] outline-none transition-colors"
                        /> */}
                      </div>
                   </div>
                   <button 
                      onClick={handleSaveAddress}
-                     className="w-full bg-white text-black font-black uppercase tracking-widest py-3 rounded-lg hover:bg-green-500 hover:text-white transition-colors mt-4 text-xs"
+                     className="w-full bg-white text-black font-black uppercase tracking-widest py-3 rounded-lg hover:bg-[#22c55e] hover:text-white transition-colors mt-4 text-xs"
                   >
                      Save & Deliver Here
                   </button>
@@ -568,7 +591,7 @@ const CartPage: React.FC<CartPageProps> = ({ cart, addToCart, updateCartItem, up
                                 setIsAddingAddress(true);
                                 setIsAddressDropdownOpen(false);
                             }}
-                            className="w-full p-4 flex items-center justify-center space-x-2 text-green-500 hover:bg-white/5 transition-colors"
+                            className="w-full p-4 flex items-center justify-center space-x-2 text-[#22c55e] hover:bg-white/5 transition-colors"
                            >
                              <Plus className="w-4 h-4" />
                              <span className="text-xs font-black uppercase tracking-widest">Add New Address</span>
@@ -596,7 +619,7 @@ const CartPage: React.FC<CartPageProps> = ({ cart, addToCart, updateCartItem, up
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
                     <div className="flex items-center space-x-2">
-                        <Gift className="w-5 h-5 text-green-500" />
+                        <Gift className="w-5 h-5 text-[#22c55e]" />
                         <h3 className="text-sm font-black uppercase tracking-widest">GIFTS</h3>
                     </div>
                     {freeGifts.length > 1 && (
@@ -623,21 +646,21 @@ const CartPage: React.FC<CartPageProps> = ({ cart, addToCart, updateCartItem, up
                         if (!product) return null;
 
                         return (
-                            <div key={gift.id || gift._id} className={`snap-start min-w-[280px] border p-4 rounded-xl flex flex-col gap-3 ${isUnlocked ? 'bg-green-500/5 border-green-500/20' : 'bg-zinc-900 border-white/5'}`}>
+                            <div key={gift.id || gift._id} className={`snap-start min-w-[280px] border p-4 rounded-xl flex flex-col gap-3 ${isUnlocked ? 'bg-[#22c55e]/5 border-[#22c55e]/20' : 'bg-zinc-900 border-white/5'}`}>
                                 <div className="flex items-start gap-4">
                                     <div className="w-16 h-20 bg-zinc-800 flex-shrink-0 overflow-hidden rounded-md border border-white/10">
                                         <img src={getThumbnailUrl(product.images[0])} alt={gift.name} loading="lazy" className="w-full h-full object-cover" />
                                     </div>
                                     <div className="flex-grow min-w-0">
-                                        <h4 className={`font-black uppercase tracking-wider text-xs truncate ${isUnlocked ? 'text-green-500' : 'text-zinc-500'}`}>
+                                        <h4 className={`font-black uppercase tracking-wider text-xs truncate ${isUnlocked ? 'text-[#22c55e]' : 'text-zinc-500'}`}>
                                             {isUnlocked ? 'Unlocked' : 'Locked'}
                                         </h4>
-                                        <Link to={`/product/${product.id}`} className="block text-white font-bold text-xs uppercase hover:text-green-500 transition-colors truncate mt-1">
+                                        <Link to={`/product/${product.id}`} className="block text-white font-bold text-xs uppercase hover:text-[#22c55e] transition-colors truncate mt-1">
                                             {product.name}
                                         </Link>
                                         <div className="flex items-center space-x-2 text-xs mt-1">
                                             <span className="text-zinc-500 line-through">₹{product.offerPrice}</span>
-                                            <span className="text-green-500 font-black text-sm">₹{gift.price || 0}</span>
+                                            <span className="text-[#22c55e] font-black text-sm">₹{gift.price || 0}</span>
                                         </div>
                                     </div>
                                 </div>
@@ -657,7 +680,7 @@ const CartPage: React.FC<CartPageProps> = ({ cart, addToCart, updateCartItem, up
                                 <button 
                                     onClick={() => handleClaimGift(gift)}
                                     disabled={!isUnlocked || isClaimed}
-                                    className={`w-full py-2 text-[10px] font-black uppercase tracking-widest transition-colors rounded-lg flex items-center justify-center space-x-2 ${isClaimed ? 'bg-zinc-800 text-zinc-500 cursor-not-allowed' : isUnlocked ? 'bg-green-500 text-black hover:bg-white' : 'bg-zinc-800 text-zinc-600 cursor-not-allowed'}`}
+                                    className={`w-full py-2 text-[10px] font-black uppercase tracking-widest transition-colors rounded-lg flex items-center justify-center space-x-2 ${isClaimed ? 'bg-zinc-800 text-zinc-500 cursor-not-allowed' : isUnlocked ? 'bg-[#22c55e] text-black hover:bg-white' : 'bg-zinc-800 text-zinc-600 cursor-not-allowed'}`}
                                 >
                                     {isClaimed ? (
                                         <>
@@ -694,7 +717,7 @@ const CartPage: React.FC<CartPageProps> = ({ cart, addToCart, updateCartItem, up
                     return (
                       <div key={`${item.productId}-${item.size}-${isThisItemFree}`} className={`flex flex-col md:flex-row gap-6 p-6 transition-all group relative ${isInvalidGift ? 'bg-red-500/5 border-red-500/20' : 'bg-zinc-900/30 border-white/5 hover:border-white/10'}`}>
                         {isThisItemFree && (
-                            <div className={`absolute top-0 right-0 text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-bl-xl z-10 ${isInvalidGift ? 'bg-red-500 text-white' : 'bg-green-500 text-black'}`}>
+                            <div className={`absolute top-0 right-0 text-[10px] font-black uppercase tracking-widest px-3 py-1 rounded-bl-xl z-10 ${isInvalidGift ? 'bg-red-500 text-white' : 'bg-[#22c55e] text-black'}`}>
                                 {isInvalidGift ? 'Criteria Not Met' : 'Gift'}
                             </div>
                         )}
@@ -712,7 +735,7 @@ const CartPage: React.FC<CartPageProps> = ({ cart, addToCart, updateCartItem, up
                                 </div>
                             )}
                             <div className="flex justify-between items-start">
-                              <Link to={`/product/${item.productId}`} className="text-lg font-black uppercase tracking-tight group-hover:text-green-500 transition-colors">{item.product.name}</Link>
+                              <Link to={`/product/${item.productId}`} className="text-lg font-black uppercase tracking-tight group-hover:text-[#22c55e] transition-colors">{item.product.name}</Link>
                               <button onClick={() => removeFromCart(item.productId, item.size, item.isGift)} className="text-zinc-600 hover:text-red-500 transition-colors"><Trash2 className="w-5 h-5" /></button>
                             </div>
                             
@@ -756,7 +779,7 @@ const CartPage: React.FC<CartPageProps> = ({ cart, addToCart, updateCartItem, up
                           <div className="flex items-center space-x-4 mt-4 md:mt-0">
                             {isThisItemFree ? (
                                 <>
-                                     <span className="text-xl font-black text-green-500">
+                                     <span className="text-xl font-black text-[#22c55e]">
                                         ₹{giftDef?.price || 0}
                                      </span>
                                      <span className="text-sm text-zinc-500 line-through">₹{item.product.offerPrice}</span>
@@ -781,7 +804,7 @@ const CartPage: React.FC<CartPageProps> = ({ cart, addToCart, updateCartItem, up
                         <h2 className="text-xl font-black uppercase tracking-tighter">Your Bag is Empty</h2>
                         <p className="text-zinc-500 text-xs font-bold uppercase tracking-widest">The soul of your wardrobe is waiting</p>
                     </div>
-                    <Link to="/" className="mt-4 px-8 py-3 bg-green-500 text-black font-black uppercase tracking-widest rounded-lg hover:bg-white transition-colors text-xs shadow-[0_0_20px_rgba(34,197,94,0.3)]">
+                    <Link to="/" className="mt-4 px-8 py-3 bg-[#22c55e] text-black font-black uppercase tracking-widest rounded-lg hover:bg-white transition-colors text-xs shadow-[0_0_20px_rgba(34,197,94,0.3)]">
                         Explore Drops
                     </Link>
                 </div>
@@ -795,7 +818,7 @@ const CartPage: React.FC<CartPageProps> = ({ cart, addToCart, updateCartItem, up
             {/* Coupon Section */}
             <div className="bg-zinc-900/50 border border-white/5 p-6 rounded-3xl space-y-4">
               <div className="flex items-center space-x-2 mb-2">
-                <Ticket className="w-5 h-5 text-green-500" />
+                <Ticket className="w-5 h-5 text-[#22c55e]" />
                 <h3 className="text-sm font-black uppercase tracking-widest">Available Offers</h3>
               </div>
               
@@ -806,7 +829,7 @@ const CartPage: React.FC<CartPageProps> = ({ cart, addToCart, updateCartItem, up
                       key={coupon.code}
                       className="ticket-border flex-shrink-0 px-8 py-5 flex flex-col items-center bg-black border-white/5 group"
                     >
-                      <span className="text-xl font-black text-green-500 tracking-tighter group-hover:scale-110 transition-transform">{coupon.code}</span>
+                      <span className="text-xl font-black text-[#22c55e] tracking-tighter group-hover:scale-110 transition-transform">{coupon.code}</span>
                       <span className="text-[10px] text-zinc-400 uppercase tracking-widest mt-1">
                         {coupon.type === 'percentage' ? `${coupon.value}% OFF` : `₹${coupon.value} OFF`}
                       </span>
@@ -824,11 +847,11 @@ const CartPage: React.FC<CartPageProps> = ({ cart, addToCart, updateCartItem, up
                     value={couponInput}
                     onChange={(e) => setCouponInput(e.target.value.toUpperCase())}
                     placeholder="Enter custom code" 
-                    className="w-full bg-black border border-white/10 px-4 py-4 text-sm font-bold uppercase tracking-widest focus:outline-none focus:border-green-500 transition-colors rounded-xl" 
+                    className="w-full bg-black border border-white/10 px-4 py-4 text-sm font-bold uppercase tracking-widest focus:outline-none focus:border-[#22c55e] transition-colors rounded-xl" 
                   />
                   <button 
                     onClick={() => handleApplyCoupon()}
-                    className="absolute right-4 top-1/2 -translate-y-1/2 text-green-500 text-xs font-black uppercase tracking-widest hover:text-white"
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-[#22c55e] text-xs font-black uppercase tracking-widest hover:text-white"
                   >
                     Apply
                   </button>
@@ -839,7 +862,7 @@ const CartPage: React.FC<CartPageProps> = ({ cart, addToCart, updateCartItem, up
                         Min spend of ₹{appliedCoupon.minBilling} required
                     </p>
                 )}
-                {couponSuccess && isCouponValid && <p className="text-[10px] text-green-500 font-bold uppercase tracking-widest pl-2">{couponSuccess}</p>}
+                {couponSuccess && isCouponValid && <p className="text-[10px] text-[#22c55e] font-bold uppercase tracking-widest pl-2">{couponSuccess}</p>}
               </div>
             </div>
 
@@ -854,32 +877,32 @@ const CartPage: React.FC<CartPageProps> = ({ cart, addToCart, updateCartItem, up
                 {discountAmount > 0 && (
                   <div className="flex justify-between text-zinc-400">
                     <span>Coupon Discount</span>
-                    <span className="text-green-500">-₹{Math.round(discountAmount)}</span>
+                    <span className="text-[#22c55e]">-₹{Math.round(discountAmount)}</span>
                   </div>
                 )}
                 {giftTotal > 0 && (
                    <div className="flex justify-between text-zinc-400">
                      <span>Gift Price Included</span>
-                     <span className="text-green-500">₹{giftTotal}</span>
+                     <span className="text-[#22c55e]">₹{giftTotal}</span>
                    </div>
                 )}
                 <div className="flex justify-between text-zinc-400">
                   <span>Shipping Fee</span>
                   <div className="flex items-center space-x-2">
                     <span className="line-through">₹49</span>
-                    <span className="text-green-500 font-bold">0</span>
+                    <span className="text-[#22c55e] font-bold">0</span>
                   </div>
                 </div>
                 <div className="pt-4 border-t border-white/5 flex justify-between items-center">
                   <span className="text-lg font-black uppercase tracking-tighter">Total Amount</span>
-                  <span className="text-2xl font-black text-green-500">₹{Math.round(total)}</span>
+                  <span className="text-2xl font-black text-[#22c55e]">₹{Math.round(total)}</span>
                 </div>
               </div>
               
               <button 
                 disabled={cartItems.length === 0 || !user || isCheckingOut || hasInvalidItems || !isCouponValid}
                 onClick={handleCheckout}
-                className={`w-full py-5 text-sm font-black uppercase tracking-[0.3em] transition-all flex items-center justify-center space-x-4 shadow-[0_10px_30px_rgba(255,255,255,0.05)] ${cartItems.length === 0 || !user || isCheckingOut || hasInvalidItems || !isCouponValid ? 'bg-zinc-800 text-zinc-500 cursor-not-allowed' : 'bg-white text-black hover:bg-green-500'}`}
+                className={`w-full py-5 text-sm font-black uppercase tracking-[0.3em] transition-all flex items-center justify-center space-x-4 shadow-[0_10px_30px_rgba(255,255,255,0.05)] ${cartItems.length === 0 || !user || isCheckingOut || hasInvalidItems || !isCouponValid ? 'bg-zinc-800 text-zinc-500 cursor-not-allowed' : 'bg-white text-black hover:bg-[#22c55e]'}`}
               >
                 <span>
                     {isCheckingOut ? 'Processing...' : 
@@ -901,6 +924,383 @@ const CartPage: React.FC<CartPageProps> = ({ cart, addToCart, updateCartItem, up
               Need Help? Contact Support
             </button>
           </div>
+        </div>
+      </div>
+
+      {/* MOBILE VIEW: For screens smaller than 1024px, 3-step process */}
+        <div className="lg:hidden">
+          {currentStep === 1 && (
+            <div className="space-y-8 animate-in fade-in slide-in-from-right-4 duration-500">
+              <div className="flex items-center justify-between mb-8">
+                 <h1 className="text-[28px] font-black uppercase tracking-tighter flex items-center space-x-3">
+                    <span className="text-[#22c55e]">BAG</span>
+                    <span className="text-sm text-zinc-500 font-bold bg-zinc-900 px-3 py-1.5 rounded-full">{cartItems.length}</span>
+                 </h1>
+                 <CheckoutProgressBar step={1} />
+              </div>
+
+              {/* Product List Step Content */}
+              <div className="space-y-6">
+                {/* Product section reuse from desktop code - simplified for mobile */}
+                {/* GIFTS Carousel */}
+                {freeGifts.length > 0 && cartItems.length > 0 && (
+                   <div className="space-y-4">
+                      <div className="flex items-center space-x-2">
+                        <Gift className="w-5 h-5 text-[#22c55e]" />
+                        <h3 className="text-sm font-black uppercase tracking-widest text-[#22c55e]/70">BAG OFFERS</h3>
+                      </div>
+                      <div ref={scrollRef} className="flex overflow-x-auto gap-4 no-scrollbar pb-2">
+                        {sortedGifts.map((gift) => {
+                          const isUnlocked = regularSubtotal >= gift.minBilling;
+                          const product = products.find(p => p.sku === gift.sku);
+                          const isClaimed = cartItems.some(item => item.product.sku === gift.sku && item.isGift);
+                          if (!product) return null;
+                          return (
+                            <div key={gift.id || gift._id} className={`flex-shrink-0 w-[240px] border p-4 rounded-xl flex flex-col gap-3 ${isUnlocked ? 'bg-[#22c55e]/10 border-[#22c55e]/20' : 'bg-zinc-900 border-white/5 opacity-80'}`}>
+                               <div className="flex items-start gap-4">
+                                  <div className="w-14 h-18 bg-zinc-800 flex-shrink-0 overflow-hidden rounded-md border border-white/10">
+                                     <img src={getThumbnailUrl(product.images[0])} alt={gift.name} className="w-full h-full object-cover" />
+                                  </div>
+                                  <div className="flex-grow min-w-0">
+                                     <h4 className={`font-black uppercase tracking-wider text-[10px] ${isUnlocked ? 'text-[#22c55e]' : 'text-zinc-500'}`}>
+                                        {isUnlocked ? 'Unlocked' : `Add ₹${gift.minBilling - regularSubtotal}`}
+                                     </h4>
+                                     <h3 className="block text-white font-bold text-[10px] uppercase truncate mt-1">
+                                        {product.name}
+                                     </h3>
+                                     <div className="flex items-center space-x-2 text-[10px] mt-1">
+                                        <span className="text-[#22c55e] font-black">₹{gift.price || 0}</span>
+                                     </div>
+                                  </div>
+                               </div>
+                               <button 
+                                 onClick={() => handleClaimGift(gift)}
+                                 disabled={!isUnlocked || isClaimed}
+                                 className={`w-full py-2 text-[10px] font-black uppercase tracking-widest rounded-lg flex items-center justify-center space-x-2 ${isClaimed ? 'bg-zinc-800 text-zinc-500' : isUnlocked ? 'bg-[#22c55e] text-black' : 'bg-zinc-900 text-zinc-600'}`}
+                               >
+                                 {isClaimed ? <Check className="w-2.5 h-2.5" /> : isUnlocked ? <Gift className="w-2.5 h-2.5" /> : <Lock className="w-2.5 h-2.5" />}
+                                 <span>{isClaimed ? 'Claimed' : isUnlocked ? 'Claim' : 'Locked'}</span>
+                               </button>
+                            </div>
+                          );
+                        })}
+                      </div>
+                   </div>
+                )}
+
+                {/* Items List */}
+                <div className="space-y-4">
+                  {cartItems.length > 0 ? (
+                    cartItems.map((item) => {
+                      const isThisItemFree = item.isGift;
+                      const giftDef = isThisItemFree ? freeGifts.find(g => g.sku === item.product.sku) : null;
+                      const isInvalidGift = isThisItemFree && giftDef && regularSubtotal < giftDef.minBilling;
+                      return (
+                         <div key={`${item.productId}-${item.size}-${isThisItemFree}`} className={`p-4 rounded-[2rem] border ${isInvalidGift ? 'bg-red-500/5 border-red-500/20' : 'bg-[#22c55e]/5 border-[#22c55e]/20'} transition-all`}>
+                            <div className="flex gap-4">
+                               <div className="w-20 h-24 bg-zinc-800 flex-shrink-0 overflow-hidden rounded-xl border border-white/5">
+                                  <img src={getThumbnailUrl(item.product.images[0])} alt={item.product.name} className="w-full h-full object-cover" />
+                               </div>
+                               <div className="flex-grow flex flex-col justify-between py-1">
+                                  <div className="flex justify-between items-start">
+                                     <h3 className="text-sm font-black uppercase tracking-tight text-white/90 line-clamp-1">{item.product.name}</h3>
+                                     <button onClick={() => removeFromCart(item.productId, item.size, item.isGift)} className="text-zinc-600 p-1"><Trash2 className="w-4 h-4" /></button>
+                                  </div>
+                                  <div className="flex items-center space-x-3 mt-1">
+                                     <div className="flex items-center space-x-1.5">
+                                        <span className="text-[10px] text-zinc-500 font-black uppercase tracking-widest">Size:</span>
+                                        <CustomDropdown value={item.size} label="Size" onChange={(newSize) => updateCartItemSize(item.productId, item.size, newSize, item.isGift)} options={Object.keys(item.product.sizes).map(s => ({ label: s, value: s, disabled: (item.product.sizes[s] || 0) === 0 }))} />
+                                     </div>
+                                     <div className="flex items-center space-x-1.5">
+                                        <span className="text-[10px] text-zinc-500 font-black uppercase tracking-widest">Qty:</span>
+                                        {isThisItemFree ? (
+                                           <span className="text-[10px] text-zinc-400 font-black">1</span>
+                                        ) : (
+                                           <CustomDropdown value={item.quantity} label="Qty" availableStock={item.product.sizes[item.size] || 0} onChange={(newQty) => updateCartItem(item.productId, item.size, parseInt(newQty), item.isGift)} options={[...Array(5)].map((_, i) => ({ label: (i + 1).toString(), value: i + 1 }))} />
+                                        )}
+                                     </div>
+                                  </div>
+                                  <div className="flex items-center gap-2 mt-2">
+                                     <span className="text-base font-black text-white">₹{isThisItemFree ? (giftDef?.price || 0) : item.product.offerPrice}</span>
+                                     <span className="text-[10px] text-zinc-500 line-through">₹{item.product.actualPrice}</span>
+                                  </div>
+                               </div>
+                            </div>
+                         </div>
+                      );
+                    })
+                  ) : (
+                    /* Empty cart mobile view */
+                    <div className="py-20 flex flex-col items-center justify-center text-center space-y-4">
+                       <ShoppingBag className="w-12 h-12 text-zinc-800" />
+                       <h2 className="text-lg font-black uppercase">Your Bag is Empty</h2>
+                       <button onClick={() => navigate('/')} className="px-8 py-3 bg-white text-black text-sm font-black uppercase tracking-widest rounded-full">Explore</button>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              {/* Proceed Button Sticky */}
+              {cartItems.length > 0 && (
+                <div className="fixed bottom-0 left-0 right-0 p-4 bg-black/80 backdrop-blur-xl border-t border-white/5 z-40">
+                  <button 
+                    onClick={() => setCurrentStep(2)}
+                    className="w-full py-5 bg-[#22c55e] text-white font-black uppercase tracking-[0.2em] text-[10px] rounded-2xl flex items-center justify-center space-x-2"
+                  >
+                    <span>PROCEED TO ADDRESS</span>
+                    <ChevronRight className="w-4 h-4" />
+                  </button>
+                </div>
+              )}
+            </div>
+          )}
+
+          {currentStep === 2 && (
+            <div className="space-y-8 animate-in fade-in slide-in-from-right-4 duration-500">
+               <div className="flex items-center justify-between mb-8 pb-4 border-b border-white/5">
+                  <button 
+                    onClick={() => setCurrentStep(1)} 
+                    className="flex items-center space-x-2 text-xs font-black uppercase tracking-widest text-[#22c55e] hover:text-white transition-colors"
+                  >
+                    <ChevronLeft className="w-4 h-4" />
+                    <span>GO BACK</span>
+                  </button>
+                  <CheckoutProgressBar step={2} />
+               </div>
+
+               <div className="space-y-6">
+                  <div className="flex items-center space-x-3 mb-2">
+                     <MapPin className="w-5 h-5 text-[#22c55e]" />
+                     <h1 className="text-sm font-black uppercase tracking-widest">Delivery Address</h1>
+                  </div>
+                  {!user ? (
+                     <div className="text-center py-10 bg-zinc-900/50 rounded-2xl border border-white/5 p-8">
+                        <LogIn className="w-10 h-10 text-zinc-700 mx-auto mb-4" />
+                        <p className="text-sm text-zinc-400 mb-6 font-medium">Please login to manage your addresses.</p>
+                        <button onClick={() => navigate('/auth')} className="w-full py-4 bg-white text-black text-sm font-black uppercase tracking-widest rounded-xl transition-all">Login Now</button>
+                     </div>
+                  ) : isAddingAddress ? (
+                     <div className="bg-zinc-900 p-6 rounded-2xl border border-white/10">
+                        <div className="flex justify-between items-center mb-6">
+                           <h4 className="text-white font-black text-sm uppercase tracking-widest">New Address</h4>
+                           <button onClick={() => setIsAddingAddress(false)} className="text-red-500 text-xs font-black uppercase">Cancel</button>
+                        </div>
+                        <div className="space-y-4">
+                           <input placeholder="Receiver Name" value={newAddress.receiverName || ''} onChange={e => setNewAddress({...newAddress, receiverName: e.target.value})} className="w-full bg-black border border-white/10 p-4 rounded-xl text-sm text-white placeholder-zinc-600 focus:border-[#22c55e] outline-none" />
+                           <input placeholder="Apartment / Building" value={newAddress.apartment || ''} onChange={e => setNewAddress({...newAddress, apartment: e.target.value})} className="w-full bg-black border border-white/10 p-4 rounded-xl text-sm text-white placeholder-zinc-600 focus:border-[#22c55e] outline-none" />
+                           <input placeholder="Road / Locality" value={newAddress.roadName || ''} onChange={e => setNewAddress({...newAddress, roadName: e.target.value})} className="w-full bg-black border border-white/10 p-4 rounded-xl text-sm text-white placeholder-zinc-600 focus:border-[#22c55e] outline-none" />
+                           <div className="grid grid-cols-2 gap-4">
+                              <input placeholder="Pincode" value={newAddress.pincode || ''} onChange={e => setNewAddress({...newAddress, pincode: e.target.value})} className="w-full bg-black border border-white/10 p-4 rounded-xl text-sm text-white placeholder-zinc-600 focus:border-[#22c55e] outline-none" />
+                              <input placeholder="City" value={newAddress.city || ''} onChange={e => setNewAddress({...newAddress, city: e.target.value})} className="w-full bg-black border border-white/10 p-4 rounded-xl text-sm text-white placeholder-zinc-600 focus:border-[#22c55e] outline-none" />
+                           </div>
+                           <select value={newAddress.state || ''} onChange={e => setNewAddress({...newAddress, state: e.target.value})} className="w-full bg-black border border-white/10 p-4 rounded-xl text-sm text-white outline-none">
+                              <option value="" disabled>Select State</option>
+                              {INDIAN_STATES.map(s => <option key={s} value={s}>{s}</option>)}
+                           </select>
+                           <button onClick={handleSaveAddress} className="w-full bg-white text-black font-black uppercase tracking-widest py-4 rounded-xl hover:bg-[#22c55e] transition-all mt-4 text-xs">Save & Continue</button>
+                        </div>
+                     </div>
+                  ) : (
+                     <div className="space-y-4">
+                        {user.addresses.length > 0 ? (
+                           <>
+                              {user.addresses.map((addr) => (
+                                 <div 
+                                    key={addr.id} 
+                                    onClick={() => setSelectedAddress(addr)}
+                                    className={`p-5 rounded-[2rem] border transition-all relative ${selectedAddress?.id === addr.id ? 'bg-[#22c55e]/10 border-[#22c55e]' : 'bg-zinc-900/50 border-white/5 opacity-60'}`}
+                                 >
+                                    <div className="flex justify-between items-start">
+                                       <div className="space-y-1">
+                                          <p className="text-white font-black text-xs uppercase tracking-widest">{addr.receiverName}</p>
+                                          <p className="text-xs text-zinc-400">{addr.apartment}, {addr.roadName}</p>
+                                          <p className="text-xs text-zinc-400">{addr.city}, {addr.state} - {addr.pincode}</p>
+                                       </div>
+                                       {selectedAddress?.id === addr.id && <Check className="w-4 h-4 text-[#22c55e]" />}
+                                    </div>
+                                    <button onClick={(e) => handleDeleteAddress(addr.id, e)} className="absolute bottom-4 right-4 text-zinc-600 p-2"><Trash2 className="w-3.5 h-3.5" /></button>
+                                 </div>
+                              ))}
+                              <button onClick={() => setIsAddingAddress(true)} className="w-full py-4 border-2 border-dashed border-white/10 text-zinc-500 hover:text-white rounded-2xl text-xs font-black uppercase tracking-widest">+ Add New Address</button>
+                           </>
+                        ) : (
+                           <div className="text-center py-10">
+                              <button onClick={() => setIsAddingAddress(true)} className="px-8 py-4 bg-zinc-900 text-white border border-white/10 rounded-2xl text-xs font-black uppercase tracking-widest">+ Add Delivery Address</button>
+                           </div>
+                        )}
+                     </div>
+                  )}
+               </div>
+
+               {/* Proceed to Summary */}
+               {selectedAddress && !isAddingAddress && (
+                  <div className="fixed bottom-0 left-0 right-0 p-4 bg-black/80 backdrop-blur-xl border-t border-white/5 z-40">
+                    <button 
+                      onClick={() => setCurrentStep(3)}
+                      className="w-full py-5 bg-[#22c55e] text-white font-black uppercase tracking-[0.2em] text-xs rounded-2xl flex items-center justify-center space-x-2"
+                    >
+                      <span>PROCEED TO SUMMARY</span>
+                      <ChevronRight className="w-4 h-4" />
+                    </button>
+                  </div>
+               )}
+            </div>
+          )}
+
+          {currentStep === 3 && (
+            <div className="space-y-8 animate-in fade-in slide-in-from-right-4 duration-500 pb-24">
+               <div className="flex items-center justify-between mb-4">
+                  <button 
+                    onClick={() => setCurrentStep(2)} 
+                    className="flex items-center space-x-2 text-[10px] font-black uppercase tracking-widest text-[#22c55e] hover:text-white transition-colors"
+                  >
+                    <ChevronLeft className="w-4 h-4" />
+                    <span>GO BACK</span>
+                  </button>
+                  <CheckoutProgressBar step={3} />
+               </div>
+
+               {/* Select Address (Read Only) - Compact version */}
+               {selectedAddress && (
+                  <div className="p-4 bg-[#22c55e]/10 border border-[#22c55e]/30 rounded-2xl">
+                     <div className="flex justify-between items-start mb-2">
+                        <div className="flex items-center space-x-2 pb-1 border-b border-[#22c55e]/30">
+                           <MapPin className="w-3.5 h-3.5 text-[#22c55e]" />
+                           <span className="text-[10px] font-black uppercase tracking-widest text-white">DELIVER TO</span>
+                        </div>
+                        <button 
+                           onClick={() => setCurrentStep(2)}
+                           className="text-[9px] font-black text-[#22c55e] uppercase tracking-widest bg-[#22c55e]/10 px-3 py-1.5 rounded-md border border-[#22c55e]/30"
+                        >
+                           CHANGE
+                        </button>
+                     </div>
+                     <div className="space-y-1">
+                        <p className="text-xs text-[#22c55e] font-black uppercase italic tracking-widest truncate">{selectedAddress.receiverName}</p>
+                        <p className="text-[10px] text-zinc-400 font-medium leading-tight">
+                           {selectedAddress.apartment}, {selectedAddress.roadName}, {selectedAddress.city} – {selectedAddress.pincode}
+                        </p>
+                        <p className="text-[9px] text-zinc-500 font-bold uppercase tracking-widest">Ph: {selectedAddress.phone || user?.phone}</p>
+                     </div>
+                  </div>
+               )}
+
+               {/* Product Details Section (Small version) */}
+               <div className="bg-[#22c55e]/10 border border-[#22c55e]/30 rounded-[2rem] p-6 space-y-6">
+                  <div className="flex justify-between items-center">
+                     <div className="flex items-center space-x-2 uppercase tracking-widest text-[11px] font-black">
+                        <ShoppingBag className="w-4 h-4 text-[#22c55e]" />
+                        <span className="text-white">ORDER SUMMARY</span>
+                     </div>
+                     <button 
+                        onClick={() => setCurrentStep(1)}
+                        className="text-[10px] font-black text-zinc-500 tracking-widest uppercase hover:text-[#22c55e]"
+                     >
+                        EDIT ITEMS
+                     </button>
+                  </div>
+                  <div className="space-y-3">
+                     {cartItems.map((item) => (
+                        <div key={`${item.productId}-${item.size}-${item.isGift}`} className="flex items-center gap-4 py-3 border-b border-white/5 last:border-0">
+                           <img src={getThumbnailUrl(item.product.images[0])} alt={item.product.name} className="w-14 h-20 object-cover rounded-md" />
+                           <div className="flex-grow min-w-0">
+                              <p className="text-xs font-black text-white uppercase tracking-tight truncate">{item.product.name}</p>
+                              <p className="text-[10px] text-zinc-500 font-bold uppercase tracking-widest mt-1">QTY: {item.quantity} • SIZE: {item.size}</p>
+                           </div>
+                           <div className="text-right">
+                              <p className="text-xs font-black text-white tracking-widest">₹{item.isGift ? (freeGifts.find(g => g.sku === item.product.sku)?.price || 0) : item.product.offerPrice}</p>
+                           </div>
+                        </div>
+                     ))}
+                  </div>
+               </div>
+
+               {/* Available Offers Section */}
+               <div className="bg-[#22c55e]/10 border border-[#22c55e]/30 rounded-[2rem] p-6 space-y-6">
+                  <div className="flex items-center space-x-2 uppercase tracking-widest text-[11px] font-black">
+                     <Ticket className="w-4 h-4 text-[#22c55e]" />
+                     <span className="text-white">AVAILABLE OFFERS</span>
+                  </div>
+
+                  {/* Horizontal Coupons List */}
+                  <div className="flex overflow-x-auto gap-3 no-scrollbar pb-2">
+                    {coupons.map((coupon) => (
+                      <button
+                        key={coupon.code}
+                        onClick={() => {
+                          setCouponInput(coupon.code);
+                          handleApplyCoupon(coupon.code);
+                        }}
+                        className="flex-shrink-0 px-7 py-5 flex flex-col items-center bg-black border border-dashed border-[#22c55e]/50 rounded-xl active:scale-95 transition-transform"
+                      >
+                        <span className="text-base font-black text-[#22c55e] tracking-tighter">{coupon.code}</span>
+                        <span className="text-[10px] text-zinc-400 uppercase tracking-widest mt-1">
+                          {coupon.type === 'percentage' ? `${coupon.value}% OFF` : `₹${coupon.value} OFF`}
+                        </span>
+                      </button>
+                    ))}
+                  </div>
+
+                  <div className="relative">
+                    <input 
+                      type="text" 
+                      value={couponInput}
+                      onChange={(e) => setCouponInput(e.target.value.toUpperCase())}
+                      placeholder="ENTER CUSTOM CODE" 
+                      className="w-full bg-black/50 border border-[#22c55e]/20 px-4 py-5 text-[11px] font-black uppercase tracking-widest text-white rounded-2xl focus:border-[#22c55e] outline-none" 
+                    />
+                    <button 
+                      onClick={() => handleApplyCoupon()}
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-[#22c55e] text-[11px] font-black uppercase tracking-widest"
+                    >
+                      Apply
+                    </button>
+                  </div>
+                  {couponError && <p className="text-[10px] text-red-500 font-bold uppercase tracking-widest animate-pulse">{couponError}</p>}
+                  {couponSuccess && isCouponValid && <p className="text-[10px] text-[#22c55e] font-bold uppercase tracking-widest">{couponSuccess}</p>}
+               </div>
+
+               {/* Order Summary */}
+               <div className="bg-[#22c55e]/10 p-6 rounded-[2rem] space-y-4 border border-[#22c55e]/30">
+                  <h3 className="text-[11px] font-black uppercase tracking-widest text-zinc-500 border-b border-white/5 pb-3">Price Details</h3>
+                  <div className="space-y-4">
+                     <div className="flex justify-between text-xs text-zinc-400">
+                        <span>Price ({cartItems.length} items)</span>
+                        <span className="text-white">₹{subtotal}</span>
+                     </div>
+                     {discountAmount > 0 && (
+                        <div className="flex justify-between text-xs text-[#22c55e] font-bold">
+                           <span>Discount</span>
+                           <span>-₹{Math.round(discountAmount)}</span>
+                        </div>
+                     )}
+                     <div className="flex justify-between text-xs text-zinc-400">
+                        <span>Delivery Fee</span>
+                        <div className="flex items-center gap-1.5 font-bold">
+                           <span className="text-zinc-600 line-through">₹49</span>
+                           <span className="text-[#22c55e]">FREE</span>
+                        </div>
+                     </div>
+                     <div className="pt-4 border-t border-white/5 flex justify-between items-center text-sm font-black uppercase tracking-widest text-white">
+                        <span>Total Amount</span>
+                        <span className="text-[#22c55e] text-xl">₹{Math.round(total)}</span>
+                     </div>
+                  </div>
+               </div>
+
+               {/* Secure Checkout Button */}
+               <div className="fixed bottom-0 left-0 right-0 p-4 bg-black/80 backdrop-blur-xl border-t border-white/5 z-40">
+                  <button 
+                    disabled={cartItems.length === 0 || !user || isCheckingOut || hasInvalidItems || !isCouponValid}
+                    onClick={handleCheckout}
+                    className={`w-full py-4 text-[10px] font-black uppercase tracking-[0.3em] rounded-2xl flex items-center justify-center space-x-3 shadow-xl transition-all ${cartItems.length === 0 || !user || isCheckingOut || hasInvalidItems || !isCouponValid ? 'bg-zinc-800 text-zinc-500' : 'bg-white text-black active:bg-[#22c55e]'}`}
+                  >
+                    <ShieldCheck className="w-4 h-4" />
+                    <span>{isCheckingOut ? 'Securing...' : 'Secure Checkout'}</span>
+                  </button>
+               </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
