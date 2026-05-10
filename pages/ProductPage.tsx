@@ -1,6 +1,7 @@
 
 import React, { useState, useMemo, useEffect, useRef } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import { Filter, ChevronDown, LayoutGrid, List, ChevronLeft, ChevronRight } from 'lucide-react';
 import ProductCard from '../components/ProductCard';
 import { Product } from '../types';
@@ -111,6 +112,10 @@ const ProductPage: React.FC<ProductPageProps> = ({ products, addToCart, toggleWi
 
   return (
     <div className="bg-black min-h-screen text-white pt-10 pb-20">
+      <Helmet>
+        <title>The Collection | Soul Stich</title>
+        <meta name="description" content="Browse our complete collection of premium apparel. Find T-shirts, Hoodies, Oversized tees and more at Soul Stich." />
+      </Helmet>
       {/* Breadcrumb Schema */}
       <script type="application/ld+json">
         {JSON.stringify({

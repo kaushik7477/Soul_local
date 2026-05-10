@@ -1,6 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 import { ShoppingBag, Heart, ShieldCheck, Truck, RefreshCw, ChevronRight, Share2, Info, X, ChevronDown, ChevronUp, Check, Banknote, Lock, Gift } from 'lucide-react';
 import { Product, FreeGift } from '../types';
 import { DUMMY_PRODUCTS } from '../constants';
@@ -98,7 +99,32 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ products, cart, addToCa
     setActiveAccordion(activeAccordion === section ? null : section);
   };
 
-  if (!product) return <div className="h-screen bg-black flex items-center justify-center text-zinc-500">Scanning Soul Stitch Records...</div>;
+  if (!product) return (
+    <div className="bg-black min-h-screen flex items-center justify-center">
+        <div className="w-10 h-10 border-4 border-green-500 border-t-transparent rounded-full animate-spin"></div>
+    </div>
+  );
+
+  const productSchema = {
+    "@context": "https://schema.org/",
+    "@type": "Product",
+    "name": product.name,
+    "image": product.images.map(img => getLargeUrl(img)),
+    "description": product.description,
+    "sku": product.sku,
+    "brand": {
+      "@type": "Brand",
+      "name": "Soul Stich"
+    },
+    "offers": {
+      "@type": "Offer",
+      "url": `https://thesoulstich.com/product/${product.id}`,
+      "priceCurrency": "INR",
+      "price": product.offerPrice,
+      "itemCondition": "https://schema.org/NewCondition",
+      "availability": "https://schema.org/InStock"
+    }
+  };
 
   const currentStock = product.sizes && selectedSize ? product.sizes[selectedSize] : 0;
   const discount = Math.round(((product.actualPrice - product.offerPrice) / product.actualPrice) * 100);
@@ -117,6 +143,16 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ products, cart, addToCa
 
   return (
     <div className="bg-black min-h-screen text-white pt-6 md:pt-12 pb-24">
+      <Helmet>
+        <title>{`${product.name} | Soul Stich`}</title>
+        <meta name="description" content={product.description.substring(0, 160)} />
+        <meta property="og:title" content={`${product.name} | Soul Stich`} />
+        <meta property="og:description" content={product.description.substring(0, 160)} />
+        <meta property="og:image" content={getLargeUrl(product.images[0])} />
+        <script type="application/ld+json">
+          {JSON.stringify(productSchema)}
+        </script>
+      </Helmet>
       {/* Breadcrumb Schema */}
       <script type="application/ld+json">
         {JSON.stringify({

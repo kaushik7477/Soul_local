@@ -3,6 +3,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { ArrowRight, Truck, RefreshCcw, CreditCard, Clock, Upload, X, User } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
+import { Helmet } from 'react-helmet-async';
 import ProductCard from '../components/ProductCard';
 import TextRotatorSection from '../components/TextRotatorSection';
 import { Product, User as UserType } from '../types';
@@ -207,6 +208,12 @@ const HomePage: React.FC<HomePageProps> = ({ products, addToCart, toggleWishlist
 
   return (
     <div className="bg-black space-y-0 pb-20 overflow-hidden">
+      <Helmet>
+        <title>Soul Stich | Premium Apparel</title>
+        <meta name="description" content="Discover premium apparel and unique clothing designs at Soul Stich. Shop the latest fashion trends with comfort and premium quality." />
+        <meta property="og:title" content="Soul Stich | Premium Apparel" />
+        <meta property="og:description" content="Premium quality meets modern fashion. Explore our latest collection today." />
+      </Helmet>
       
       {/* Hero Banner Section */}
       <section className="relative h-[80vh] md:h-[80vh] overflow-hidden">
