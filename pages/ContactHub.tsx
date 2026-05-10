@@ -189,13 +189,17 @@ const ContactHub: React.FC = () => {
               </p>
               <div className="flex gap-3">
                 <a
-                  href="#"
+                  href="https://www.instagram.com/soulstichofficial/"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="p-2 rounded-xl bg-zinc-950 border border-white/10 text-zinc-400 hover:text-white hover:border-green-500/60"
                 >
                   <Instagram className="w-4 h-4" />
                 </a>
                 <a
-                  href="#"
+                  href="https://www.facebook.com/profile.php?id=61576681030860"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="p-2 rounded-xl bg-zinc-950 border border-white/10 text-zinc-400 hover:text-white hover:border-green-500/60"
                 >
                   <Facebook className="w-4 h-4" />

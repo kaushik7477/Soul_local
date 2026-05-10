@@ -82,6 +82,8 @@ const Header: React.FC<HeaderProps> = ({ user, cartCount, wishlistCount, product
             <Link to="/" className="hover:text-green-500 transition-colors">Home</Link>
             <Link to="/products?gender=Men" className="hover:text-green-500 transition-colors">Men</Link>
             <Link to="/products?gender=Women" className="hover:text-green-500 transition-colors">Women</Link>
+            <Link to="/products" className="hover:text-green-500 transition-colors">New Arrivals</Link>
+            <Link to="/about" className="hover:text-green-500 transition-colors">About Us</Link>
           </nav>
         </div>
 
@@ -175,11 +177,12 @@ const Header: React.FC<HeaderProps> = ({ user, cartCount, wishlistCount, product
               <span className="text-xl font-bold tracking-tighter">SOUL STICH</span>
               <button onClick={() => setIsMenuOpen(false)}><X className="w-6 h-6" /></button>
             </div>
-            <div className="flex flex-col space-y-8 text-2xl font-bold uppercase tracking-tight">
+            <div className="flex flex-col space-y-6 text-xl font-bold uppercase tracking-tight">
               <Link to="/" onClick={() => setIsMenuOpen(false)} className="hover:text-green-500">Home</Link>
               <Link to="/products?gender=Men" onClick={() => setIsMenuOpen(false)} className="hover:text-green-500">Men</Link>
               <Link to="/products?gender=Women" onClick={() => setIsMenuOpen(false)} className="hover:text-green-500">Women</Link>
-              <Link to="/products?cat=hoodie" onClick={() => setIsMenuOpen(false)} className="hover:text-green-500">Hoodies</Link>
+              <Link to="/products" onClick={() => setIsMenuOpen(false)} className="hover:text-green-500">New Arrivals</Link>
+              <Link to="/about" onClick={() => setIsMenuOpen(false)} className="hover:text-green-500">About Us</Link>
             </div>
             <div className="mt-auto pt-10 border-t border-white/10 flex flex-col space-y-6 text-zinc-500 text-sm font-bold uppercase tracking-widest">
               <Link to="/profile" onClick={() => setIsMenuOpen(false)} className="flex items-center space-x-2">

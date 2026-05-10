@@ -694,6 +694,27 @@ const HomePage: React.FC<HomePageProps> = ({ products, addToCart, toggleWishlist
         )}
       </AnimatePresence>
 
+      {/* SEO & Brand Story Section */}
+      <section className="container mx-auto px-4 py-20 border-t border-white/5">
+        <div className="max-w-4xl mx-auto text-center space-y-8">
+          <h2 className="text-3xl md:text-4xl font-black uppercase tracking-tighter">Premium Apparel with Soul</h2>
+          <div className="space-y-6 text-zinc-400 font-medium leading-relaxed">
+            <p>
+              Welcome to <Link to="/" className="text-white hover:text-green-500 underline decoration-green-500/30 transition-colors">Soul Stich</Link>, your ultimate destination for high-quality, premium apparel. We specialize in creating unique designs that blend modern trends with exceptional comfort. Whether you're looking for the perfect <Link to="/products?cat=T-shirt" className="text-white hover:text-green-500 underline decoration-green-500/30 transition-colors">T-Shirt</Link>, a cozy <Link to="/products?cat=hoodie" className="text-white hover:text-green-500 underline decoration-green-500/30 transition-colors">Hoodie</Link>, or a stylish <Link to="/products?cat=Oversized" className="text-white hover:text-green-500 underline decoration-green-500/30 transition-colors">Oversized Tee</Link>, our collection is engineered for excellence.
+            </p>
+            <p>
+              Explore our latest <Link to="/products?gender=Men" className="text-white hover:text-green-500 underline decoration-green-500/30 transition-colors">Men's Collection</Link> and <Link to="/products?gender=Women" className="text-white hover:text-green-500 underline decoration-green-500/30 transition-colors">Women's Fashion</Link> to find your next favorite outfit. At Soul Stich, we believe that clothing is an extension of your personality, which is why we offer a wide range of styles including <Link to="/products?cat=Puff Print" className="text-white hover:text-green-500 underline decoration-green-500/30 transition-colors">Puff Print</Link>, <Link to="/products?cat=DTF" className="text-white hover:text-green-500 underline decoration-green-500/30 transition-colors">DTF Prints</Link>, <Link to="/products?cat=Screen Print" className="text-white hover:text-green-500 underline decoration-green-500/30 transition-colors">Screen Printed</Link>, and <Link to="/products?cat=RELAXED FIT" className="text-white hover:text-green-500 underline decoration-green-500/30 transition-colors">Relaxed Fit</Link> essentials.
+            </p>
+            <p>
+              Discover our trending <Link to="/products?cat=ACID WASH" className="text-white hover:text-green-500 underline decoration-green-500/30 transition-colors">Acid Wash</Link> collection or go for the timeless <Link to="/products?cat=PLAIN" className="text-white hover:text-green-500 underline decoration-green-500/30 transition-colors">Plain Basics</Link>. We are committed to providing the best <Link to="/products" className="text-white hover:text-green-500 underline decoration-green-500/30 transition-colors">Premium Clothing in India</Link>.
+            </p>
+            <p>
+              Learn more <Link to="/about" className="text-green-500 hover:text-white font-black uppercase tracking-widest text-xs transition-colors">About Us</Link> and our commitment to providing the best premium apparel in the industry.
+            </p>
+          </div>
+        </div>
+      </section>
+
       {/* Upload Modal */}
       <AnimatePresence>
         {isUploadModalOpen && (

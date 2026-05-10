@@ -198,7 +198,7 @@ const TextRotatorSection: React.FC = () => {
         className="m-0 text-[clamp(2rem,12vw,8rem)] leading-none font-normal tracking-[-0.02em]"
         style={{ fontFamily: '"Lora", serif', textShadow: '0 0 40px rgba(34, 197, 94, 0.6)' }}
       >
-        <span className="sr-only">Move Style & Soul</span>
+        <span className="sr-only">Soul Stich | Premium Apparel</span>
         <div aria-hidden="true">
           Soul in {' '}
           <span 

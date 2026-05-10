@@ -2,6 +2,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { ShoppingBag, Heart, ShieldCheck, Truck, RefreshCw, ChevronRight } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const AboutUs: React.FC = () => {
   return (
@@ -20,7 +21,7 @@ const AboutUs: React.FC = () => {
 
           <div className="space-y-8 text-lg md:text-xl leading-relaxed text-zinc-300 font-medium">
             <p>
-              Welcome to <span className="text-white font-black italic">SoulStich</span>, where fashion meets self-expression. We believe that fashion is more than just clothing—it's a canvas to paint your individuality on, and a celebration of comfort.
+              Welcome to <Link to="/" className="text-white font-black italic hover:text-green-500 transition-colors">SoulStich</Link>, where fashion meets self-expression. We believe that fashion is more than just clothing—it's a canvas to paint your individuality on, and a celebration of comfort.
             </p>
             
             <p>
@@ -34,7 +35,7 @@ const AboutUs: React.FC = () => {
                 </div>
                 <h3 className="text-xl font-black uppercase italic">Curated Collection</h3>
                 <p className="text-sm text-zinc-400">
-                  We offer a curated collection of premium apparel, which we started with printed oversized t-shirts and aim to expand the collection soon, each design reflecting the statement that you determine to make.
+                  We offer a curated collection of <Link to="/products" className="text-white hover:text-green-500 underline decoration-green-500/30 transition-colors">premium apparel</Link>, which we started with <Link to="/products?cat=Oversized" className="text-white hover:text-green-500 underline decoration-green-500/30 transition-colors">printed oversized t-shirts</Link> and aim to expand the collection soon, each design reflecting the statement that you determine to make.
                 </p>
               </div>
 
@@ -44,7 +45,7 @@ const AboutUs: React.FC = () => {
                 </div>
                 <h3 className="text-xl font-black uppercase italic">Premium Quality</h3>
                 <p className="text-sm text-zinc-400">
-                  Every piece is crafted with careful precision, using high-quality fabrics to ensure durability and comfort to give a seamless experience in which your attire feels like your second skin.
+                  Every piece is crafted with careful precision, using high-quality fabrics like our <Link to="/products?cat=Puff Print" className="text-white hover:text-green-500 underline decoration-green-500/30 transition-colors">Puff Print</Link> and <Link to="/products?cat=T-shirt" className="text-white hover:text-green-500 underline decoration-green-500/30 transition-colors">T-Shirts</Link> to ensure durability and comfort to give a seamless experience in which your attire feels like your second skin.
                 </p>
               </div>
             </div>
@@ -58,7 +59,7 @@ const AboutUs: React.FC = () => {
             </p>
 
             <p className="text-center pt-8">
-              Explore our ensemble today to find the perfect piece that resonates with soul.
+              Explore our <Link to="/products" className="text-green-500 hover:text-white font-black uppercase tracking-widest text-sm transition-colors">full ensemble today</Link> to find the perfect piece that resonates with soul.
             </p>
           </div>
         </motion.div>

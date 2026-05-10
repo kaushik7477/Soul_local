@@ -15,8 +15,8 @@ const Footer: React.FC = () => {
               Pushing the boundaries of premium apparel through innovation and soul.
             </p>
             <div className="flex space-x-4">
-              <a href="#" className="p-2 bg-zinc-900 text-zinc-400 hover:text-white hover:bg-zinc-800 transition-all"><Instagram className="w-5 h-5" /></a>
-              <a href="#" className="p-2 bg-zinc-900 text-zinc-400 hover:text-white hover:bg-zinc-800 transition-all"><Facebook className="w-5 h-5" /></a>
+              <a href="https://www.instagram.com/soulstichofficial/" target="_blank" rel="noopener noreferrer" className="p-2 bg-zinc-900 text-zinc-400 hover:text-white hover:bg-zinc-800 transition-all"><Instagram className="w-5 h-5" /></a>
+              <a href="https://www.facebook.com/profile.php?id=61576681030860" target="_blank" rel="noopener noreferrer" className="p-2 bg-zinc-900 text-zinc-400 hover:text-white hover:bg-zinc-800 transition-all"><Facebook className="w-5 h-5" /></a>
               <a href="mailto:soulstich.store@gmail.com" className="p-2 bg-zinc-900 text-zinc-400 hover:text-white hover:bg-zinc-800 transition-all"><Mail className="w-5 h-5" /></a>
               <a href="tel:+916289388029" className="p-2 bg-zinc-900 text-zinc-400 hover:text-white hover:bg-zinc-800 transition-all"><Phone className="w-5 h-5" /></a>
             </div>
@@ -45,6 +45,18 @@ const Footer: React.FC = () => {
                 <span className="text-zinc-300 uppercase tracking-widest font-bold block mb-1 text-xs">Address:</span>
                 Fortune township, 49/2, jessore road, Kajipara, Barasat, kolkata - 700125, West Bengal, North 24 Parganas, 700125
               </li>
+            </ul>
+          </div>
+
+          <div>
+            <h4 className="text-xs font-black uppercase tracking-[0.3em] text-zinc-300 mb-8">Top Categories</h4>
+            <ul className="space-y-4 text-sm font-bold text-zinc-500 uppercase tracking-widest">
+              <li><Link to="/products?cat=T-shirt" className="hover:text-green-500 transition-colors">T-Shirts</Link></li>
+              <li><Link to="/products?cat=Oversized" className="hover:text-green-500 transition-colors">Oversized Tees</Link></li>
+              <li><Link to="/products?cat=hoodie" className="hover:text-green-500 transition-colors">Hoodies</Link></li>
+              <li><Link to="/products?cat=Puff Print" className="hover:text-green-500 transition-colors">Puff Print</Link></li>
+              <li><Link to="/products?gender=Men" className="hover:text-green-500 transition-colors">Men's Collection</Link></li>
+              <li><Link to="/products?gender=Women" className="hover:text-green-500 transition-colors">Women's Fashion</Link></li>
             </ul>
           </div>
 

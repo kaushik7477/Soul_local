@@ -117,6 +117,34 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ products, cart, addToCa
 
   return (
     <div className="bg-black min-h-screen text-white pt-6 md:pt-12 pb-24">
+      {/* Breadcrumb Schema */}
+      <script type="application/ld+json">
+        {JSON.stringify({
+          "@context": "https://schema.org",
+          "@type": "BreadcrumbList",
+          "itemListElement": [
+            {
+              "@type": "ListItem",
+              "position": 1,
+              "name": "Home",
+              "item": "https://thesoulstich.com/"
+            },
+            {
+              "@type": "ListItem",
+              "position": 2,
+              "name": "Collection",
+              "item": "https://thesoulstich.com/products"
+            },
+            {
+              "@type": "ListItem",
+              "position": 3,
+              "name": product.name,
+              "item": `https://thesoulstich.com/product/${product.id}`
+            }
+          ]
+        })}
+      </script>
+
       <div className="container mx-auto px-4">
         
         {/* Breadcrumbs */}
