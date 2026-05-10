@@ -6,7 +6,7 @@ import { ShoppingBag, Heart, ShieldCheck, Truck, RefreshCw, ChevronRight, Share2
 import { Product, FreeGift } from '../types';
 import { DUMMY_PRODUCTS } from '../constants';
 import ProductCard from '../components/ProductCard';
-import { fetchFreeGifts } from '../src/api';
+import { fetchFreeGifts, fetchReviews } from '../src/api';
 import { getLargeUrl, getThumbnailUrl } from '../src/utils/cloudinary';
 
 interface ProductDetailsProps {
@@ -30,6 +30,7 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ products, cart, addToCa
   const [activeAccordion, setActiveAccordion] = useState<string | null>(null);
   
   const [freeGifts, setFreeGifts] = useState<FreeGift[]>([]);
+  const [productReviews, setProductReviews] = useState<any[]>([]);
 
   useEffect(() => {
     const loadGifts = async () => {
@@ -50,6 +51,15 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ products, cart, addToCa
       const firstAvailable = Object.entries(found.sizes).find(([_, stock]) => (stock as number) > 0)?.[0];
       if (firstAvailable) setSelectedSize(firstAvailable);
       setIsAddedToCart(false); // Reset cart state on product change
+
+      // Load reviews for schema
+      const loadReviews = async () => {
+        try {
+          const data = await fetchReviews(false, found.sku);
+          setProductReviews(data);
+        } catch (e) {}
+      };
+      loadReviews();
     }
     window.scrollTo(0, 0);
   }, [id, products]);
@@ -123,7 +133,26 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ products, cart, addToCa
       "price": product.offerPrice,
       "itemCondition": "https://schema.org/NewCondition",
       "availability": "https://schema.org/InStock"
-    }
+    },
+    ...(productReviews.length > 0 ? {
+      "aggregateRating": {
+        "@type": "AggregateRating",
+        "ratingValue": (productReviews.reduce((acc, r) => acc + r.rating, 0) / productReviews.length).toFixed(1),
+        "reviewCount": productReviews.length
+      },
+      "review": productReviews.slice(0, 5).map(r => ({
+        "@type": "Review",
+        "author": {
+          "@type": "Person",
+          "name": r.userName || "Customer"
+        },
+        "reviewRating": {
+          "@type": "Rating",
+          "ratingValue": r.rating
+        },
+        "reviewBody": r.comment
+      }))
+    } : {})
   };
 
   const currentStock = product.sizes && selectedSize ? product.sizes[selectedSize] : 0;
@@ -146,9 +175,13 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ products, cart, addToCa
       <Helmet>
         <title>{`${product.name} | Soul Stich`}</title>
         <meta name="description" content={product.description.substring(0, 160)} />
+        <link rel="canonical" href={`https://thesoulstich.com/product/${product.id}`} />
         <meta property="og:title" content={`${product.name} | Soul Stich`} />
         <meta property="og:description" content={product.description.substring(0, 160)} />
         <meta property="og:image" content={getLargeUrl(product.images[0])} />
+        <meta property="og:url" content={`https://thesoulstich.com/product/${product.id}`} />
+        <meta property="og:type" content="product" />
+        <meta name="twitter:card" content="summary_large_image" />
         <script type="application/ld+json">
           {JSON.stringify(productSchema)}
         </script>

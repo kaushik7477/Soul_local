@@ -70,8 +70,10 @@ export const deleteCategory = async (id: string) => {
   return data;
 };
 
-export const fetchReviews = async (admin: boolean = false) => {
-  const { data } = await api.get('/reviews', { params: { admin } });
+export const fetchReviews = async (admin: boolean = false, sku?: string) => {
+  const params: any = { admin };
+  if (sku) params.sku = sku;
+  const { data } = await api.get('/reviews', { params });
   return data;
 };
 

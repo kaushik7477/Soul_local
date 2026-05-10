@@ -3,10 +3,16 @@ import React from 'react';
 import { motion } from 'framer-motion';
 import { ShoppingBag, Heart, ShieldCheck, Truck, RefreshCw, ChevronRight } from 'lucide-react';
 import { Link } from 'react-router-dom';
+import { Helmet } from 'react-helmet-async';
 
 const AboutUs: React.FC = () => {
   return (
     <div className="bg-black min-h-screen text-white pt-24 pb-20">
+      <Helmet>
+        <title>About Us | Soul Stich</title>
+        <meta name="description" content="Learn more about Soul Stich and our mission to provide premium apparel and self-expression through fashion." />
+        <link rel="canonical" href="https://thesoulstich.com/about" />
+      </Helmet>
       <div className="container mx-auto px-4 max-w-4xl">
         <motion.div 
           initial={{ opacity: 0, y: 20 }}

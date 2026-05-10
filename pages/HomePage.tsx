@@ -211,8 +211,13 @@ const HomePage: React.FC<HomePageProps> = ({ products, addToCart, toggleWishlist
       <Helmet>
         <title>Soul Stich | Premium Apparel</title>
         <meta name="description" content="Discover premium apparel and unique clothing designs at Soul Stich. Shop the latest fashion trends with comfort and premium quality." />
+        <link rel="canonical" href="https://thesoulstich.com/" />
         <meta property="og:title" content="Soul Stich | Premium Apparel" />
         <meta property="og:description" content="Premium quality meets modern fashion. Explore our latest collection today." />
+        <meta property="og:url" content="https://thesoulstich.com/" />
+        <meta property="og:type" content="website" />
+        <meta property="og:image" content="https://thesoulstich.com/og-image.jpg" />
+        <meta name="twitter:card" content="summary_large_image" />
       </Helmet>
       
       {/* Hero Banner Section */}

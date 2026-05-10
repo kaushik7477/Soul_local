@@ -219,8 +219,9 @@ router.delete('/categories/:id', async (req, res) => {
 // --- Reviews ---
 router.get('/reviews', async (req, res) => {
   try {
-    const { admin } = req.query;
-    const query = admin === 'true' ? {} : { isApproved: true };
+    const { admin, sku } = req.query;
+    let query = admin === 'true' ? {} : { isApproved: true };
+    if (sku) query.productSku = sku;
     const reviews = await Review.find(query).sort({ createdAt: -1 });
     res.json(reviews);
   } catch (err) {

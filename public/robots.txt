@@ -1,0 +1,12 @@
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://thesoulstich.com/sitemap.xml
+
+# Disallow admin and private routes
+Disallow: /admin
+Disallow: /profile
+Disallow: /cart
+Disallow: /wishlist
+Disallow: /order/

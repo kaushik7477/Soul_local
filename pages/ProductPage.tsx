@@ -115,6 +115,11 @@ const ProductPage: React.FC<ProductPageProps> = ({ products, addToCart, toggleWi
       <Helmet>
         <title>The Collection | Soul Stich</title>
         <meta name="description" content="Browse our complete collection of premium apparel. Find T-shirts, Hoodies, Oversized tees and more at Soul Stich." />
+        <link rel="canonical" href="https://thesoulstich.com/products" />
+        <meta property="og:title" content="The Collection | Soul Stich" />
+        <meta property="og:description" content="Browse our complete collection of premium apparel. Find T-shirts, Hoodies, Oversized tees and more at Soul Stich." />
+        <meta property="og:url" content="https://thesoulstich.com/products" />
+        <meta property="og:type" content="website" />
       </Helmet>
       {/* Breadcrumb Schema */}
       <script type="application/ld+json">
