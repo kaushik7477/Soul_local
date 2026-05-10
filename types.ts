@@ -12,6 +12,7 @@ export interface Product {
   actualPrice: number;
   offerPrice: number;
   images: string[];
+  imageAlts?: string[];
   description: string;
   sizes: { [key: string]: number }; // Size name -> stock count
   

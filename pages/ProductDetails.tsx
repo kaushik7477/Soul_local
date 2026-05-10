@@ -203,12 +203,22 @@ const ProductDetails: React.FC<ProductDetailsProps> = ({ products, cart, addToCa
                   onClick={() => setActiveImage(i)}
                   className={`w-20 md:w-full aspect-[3/4] border ${activeImage === i ? 'border-green-500' : 'border-white/10'} overflow-hidden transition-all`}
                 >
-                  <img src={getThumbnailUrl(img)} alt="" loading="lazy" className="w-full h-full object-cover" />
+                  <img 
+                    src={getThumbnailUrl(img)} 
+                    alt={product.imageAlts?.[i] || `Soul Stich ${product.name} Thumbnail ${i + 1}`} 
+                    loading="lazy" 
+                    className="w-full h-full object-cover" 
+                  />
                 </button>
               ))}
             </div>
             <div className="order-1 md:order-2 w-full h-[90vh] overflow-hidden bg-transparent border-none">
-              <img src={getLargeUrl(product.images[activeImage])} alt={product.name} loading="eager" className="w-full h-full object-contain" />
+              <img 
+                src={getLargeUrl(product.images[activeImage])} 
+                alt={product.imageAlts?.[activeImage] || `Soul Stich ${product.name}`} 
+                loading="eager" 
+                className="w-full h-full object-contain" 
+              />
             </div>
           </div>
 

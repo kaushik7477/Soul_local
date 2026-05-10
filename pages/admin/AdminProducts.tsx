@@ -52,6 +52,7 @@ const AdminProducts: React.FC<AdminProductsProps> = ({ products, setProducts }) 
     sizes: { S: 0, M: 0, L: 0, XL: 0, XXL: 0 } as { [key: string]: number },
     category: [] as string[], // Used for Gender/Type
     tags: [] as string[],
+    imageAlts: [] as string[],
     quality: '',
     pickupPoint: '',
     exchangePolicy: { type: 'days', days: 7 } as Product['exchangePolicy'],
@@ -179,6 +180,7 @@ const AdminProducts: React.FC<AdminProductsProps> = ({ products, setProducts }) 
       sizes: product.sizes || { S: 0, M: 0, L: 0, XL: 0, XXL: 0 },
       category: product.category || [],
       tags: product.tags || [],
+      imageAlts: product.imageAlts || [],
       quality: product.quality || '',
       pickupPoint: product.pickupPoint || '',
       exchangePolicy: product.exchangePolicy || { type: 'days', days: 7 },
@@ -230,6 +232,7 @@ const AdminProducts: React.FC<AdminProductsProps> = ({ products, setProducts }) 
         offerPrice: Number(formData.offerPrice),
         productionCost: Number(formData.productionCost) || 0,
         images: allImages,
+        imageAlts: formData.imageAlts, // Alts are already synced with combined indices
         manufactureDate: new Date(formData.manufactureDate)
       };
 
@@ -581,35 +584,92 @@ const AdminProducts: React.FC<AdminProductsProps> = ({ products, setProducts }) 
                 {/* Right Column */}
                 <div className="space-y-6">
                     {/* Images */}
-                    <div>
+                    <div className="space-y-4">
                         <label className="block text-xs font-bold uppercase text-zinc-500 mb-2">Images (Min 1, Max 10)</label>
-                        <div className="flex flex-wrap gap-2 mb-2">
+                        <div className="space-y-3">
                             {existingImages.map((img, i) => (
-                                <div key={i} className="relative w-16 h-16 rounded overflow-hidden group">
-                                    <img src={img} className="w-full h-full object-cover" alt="" />
-                                    <button 
-                                        onClick={() => setExistingImages(existingImages.filter((_, idx) => idx !== i))}
-                                        className="absolute inset-0 bg-black/50 hidden group-hover:flex items-center justify-center text-red-500"
-                                    >
-                                        <X className="w-4 h-4" />
-                                    </button>
+                                <div key={i} className="flex gap-4 items-center bg-zinc-900/50 p-3 rounded-xl border border-white/5 group">
+                                    <div className="relative w-16 h-16 rounded overflow-hidden flex-shrink-0">
+                                        <img src={img} className="w-full h-full object-cover" alt="" />
+                                        <button 
+                                            onClick={() => {
+                                                setExistingImages(existingImages.filter((_, idx) => idx !== i));
+                                                setFormData(prev => ({
+                                                    ...prev,
+                                                    imageAlts: prev.imageAlts.filter((_, idx) => idx !== i)
+                                                }));
+                                            }}
+                                            className="absolute inset-0 bg-black/50 hidden group-hover:flex items-center justify-center text-red-500"
+                                        >
+                                            <X className="w-4 h-4" />
+                                        </button>
+                                    </div>
+                                    <div className="flex-grow">
+                                        <input 
+                                            type="text" 
+                                            placeholder="Image Alt Text (e.g. Black Oversized T-shirt)"
+                                            className="w-full bg-zinc-950 border border-white/10 px-3 py-2 rounded-lg text-[10px] text-white outline-none focus:border-green-500/60"
+                                            value={formData.imageAlts[i] || ''}
+                                            onChange={e => {
+                                                const newAlts = [...formData.imageAlts];
+                                                newAlts[i] = e.target.value;
+                                                setFormData({...formData, imageAlts: newAlts});
+                                            }}
+                                        />
+                                    </div>
                                 </div>
                             ))}
                         </div>
-                        <input 
-                            type="file" multiple accept="image/*"
-                            onChange={e => {
-                                const files = Array.from(e.target.files || []);
-                                if (files.length + existingImages.length > 10) {
-                                    alert("Max 10 images total");
-                                    return;
-                                }
-                                setProductImages([...productImages, ...files]);
-                            }}
-                            className="w-full text-xs text-zinc-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-green-500 file:text-black hover:file:bg-white"
-                        />
-                         <div className="text-[10px] text-zinc-500 mt-1">
-                            {productImages.length > 0 && `${productImages.length} new files selected`}
+                        
+                        <div className="bg-zinc-900/30 p-4 rounded-xl border border-dashed border-white/10">
+                            <input 
+                                type="file" multiple accept="image/*"
+                                onChange={e => {
+                                    const files = Array.from(e.target.files || []);
+                                    if (files.length + existingImages.length > 10) {
+                                        alert("Max 10 images total");
+                                        return;
+                                    }
+                                    setProductImages([...productImages, ...files]);
+                                    // Initialize alts for new images
+                                    setFormData(prev => ({
+                                        ...prev,
+                                        imageAlts: [...prev.imageAlts, ...new Array(files.length).fill('')]
+                                    }));
+                                }}
+                                className="w-full text-xs text-zinc-400 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-semibold file:bg-green-500 file:text-black hover:file:bg-white"
+                            />
+                            {productImages.length > 0 && (
+                                <div className="mt-4 space-y-2">
+                                    <p className="text-[10px] font-bold uppercase text-zinc-500">New Images Alts:</p>
+                                    {productImages.map((file, i) => (
+                                        <div key={i} className="flex gap-3 items-center">
+                                            <span className="text-[9px] text-zinc-500 truncate w-20">{file.name}</span>
+                                            <input 
+                                                type="text" 
+                                                placeholder="Alt text..."
+                                                className="flex-grow bg-zinc-950 border border-white/10 px-3 py-1.5 rounded-lg text-[10px] text-white"
+                                                value={formData.imageAlts[existingImages.length + i] || ''}
+                                                onChange={e => {
+                                                    const newAlts = [...formData.imageAlts];
+                                                    newAlts[existingImages.length + i] = e.target.value;
+                                                    setFormData({...formData, imageAlts: newAlts});
+                                                }}
+                                            />
+                                            <button onClick={() => {
+                                                const newFiles = [...productImages];
+                                                newFiles.splice(i, 1);
+                                                setProductImages(newFiles);
+                                                const newAlts = [...formData.imageAlts];
+                                                newAlts.splice(existingImages.length + i, 1);
+                                                setFormData({...formData, imageAlts: newAlts});
+                                            }}>
+                                                <X className="w-3 h-3 text-red-500" />
+                                            </button>
+                                        </div>
+                                    ))}
+                                </div>
+                            )}
                         </div>
                     </div>
 
