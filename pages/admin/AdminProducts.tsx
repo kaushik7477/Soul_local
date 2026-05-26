@@ -18,6 +18,7 @@ const AdminProducts: React.FC<AdminProductsProps> = ({ products, setProducts }) 
   const [showTagInput, setShowTagInput] = useState(false);
   const [isDeleteMode, setIsDeleteMode] = useState(false);
   const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [isUploading, setIsUploading] = useState(false);
   
   // Dropdown Options State (Dynamic + Defaults)
   const defaultQualities = ['100% Cotton', 'Silk', 'Polyester', 'Blend', '240GSM French Terry'];
@@ -221,6 +222,7 @@ const AdminProducts: React.FC<AdminProductsProps> = ({ products, setProducts }) 
         return;
     }
 
+    setIsUploading(true);
     try {
       // Upload new images
       const newImageUrls = await Promise.all(productImages.map(file => uploadImage(file)));
@@ -254,6 +256,8 @@ const AdminProducts: React.FC<AdminProductsProps> = ({ products, setProducts }) 
     } catch (e: any) {
       // console.error("Operation failed", e);
       alert("Operation Failed: " + (e.response?.data?.error || e.message));
+    } finally {
+      setIsUploading(false);
     }
   };
 
@@ -271,6 +275,19 @@ const AdminProducts: React.FC<AdminProductsProps> = ({ products, setProducts }) 
 
   return (
     <div className="space-y-8 animate-in fade-in duration-500 pb-20 relative">
+      {/* Upload Loading Overlay */}
+      {isUploading && (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-[100] animate-in fade-in duration-300">
+          <div className="bg-zinc-900 border border-white/10 p-8 rounded-3xl flex flex-col items-center space-y-4 shadow-2xl">
+            <div className="w-12 h-12 border-4 border-green-500 border-t-transparent rounded-full animate-spin"></div>
+            <div className="text-center">
+              <h3 className="text-white font-black uppercase tracking-widest text-sm">Uploading Artifact</h3>
+              <p className="text-zinc-500 text-[10px] uppercase font-bold mt-1">Please wait while we process your request...</p>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Delete Modal */}
       {deleteId && (
         <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 animate-in fade-in duration-200">
